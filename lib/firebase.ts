@@ -10,8 +10,8 @@ import { getAuth } from "firebase/auth";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDZgIDIOSyxIbE5bXq8uSs4-vw7BzuG-70",
-  authDomain: "give4need-b6888.firebaseapp.com",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
   projectId: "give4need-b6888",
   storageBucket: "give4need-b6888.appspot.com",
   messagingSenderId: "423355697414",
