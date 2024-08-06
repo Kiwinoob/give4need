@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase"; // Adjust the path to your Firebase config
+import { auth } from "@/app/firebase"; // Adjust the path to your Firebase config
 
 const PUBLIC_PATHS = ["/register", "/login", "/reset-password"];
 
