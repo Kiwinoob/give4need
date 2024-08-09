@@ -18,18 +18,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
-      <Toaster
-        closeButton
-        icons={{
-          success: (
-            <Icons.circleDashedCheck className="size-5 text-[#089445] dark:text-[#32d46c]" />
-          ),
-          info: <Icons.infoCircle className="size-5 text-[#3498d9]" />,
-          warning: <Icons.alertTriangle className="size-5 text-[#f0c100]" />,
-          error: <Icons.exclamationCircle className="size-5 text-[#da1415]" />,
-        }}
-      />
+      <body className={inter.className}>
+        {children}
+        <Toaster
+          closeButton
+          icons={{
+            success: (
+              <Icons.circleDashedCheck className="size-5 text-[#089445] dark:text-[#32d46c]" />
+            ),
+            info: <Icons.infoCircle className="size-5 text-[#3498d9]" />,
+            warning: <Icons.alertTriangle className="size-5 text-[#f0c100]" />,
+            error: (
+              <Icons.exclamationCircle className="size-5 text-[#da1415]" />
+            ),
+          }}
+        />
+      </body>
     </html>
   );
 }

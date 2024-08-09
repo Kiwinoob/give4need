@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { SideBar } from "@/components/side-bar";
 import { Header } from "@/components/header";
+//import { AuthProvider } from "@/components/auth-provider";
 
 export default async function DashboardLayout({
   children,

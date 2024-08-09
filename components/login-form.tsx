@@ -1,27 +1,30 @@
 "use client"; // Mark this component as a client-side component
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useState } from "react";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/app/firebase";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default function RegisterForm() {
-  const [name, setName] = useState("");
+export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
     setIsLoading(true);
 
     // Basic validation
-    if (!name || !email || !password) {
+    if (!email || !password) {
       setError("All fields are required.");
       setIsLoading(false);
       toast.error("All fields are required.");
@@ -37,28 +40,31 @@ export default function RegisterForm() {
       return;
     }
 
-    // Password validation
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters long.");
-      setIsLoading(false);
-      toast.error("Password must be at least 6 characters long.");
-      return;
-    }
-
     try {
-      const userCredential = await createUserWithEmailAndPassword(
+      const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
-      // Update the user's profile with the name
-      await updateProfile(userCredential.user, { displayName: name });
+      const user = userCredential.user;
+
+      // Get the ID token
+      const idToken = await user.getIdToken();
+
+      // Store the ID token in a cookie
+      document.cookie = `auth-token=${idToken}; expires=${new Date(
+        Date.now() + 86400 * 30000 // 30 day in milliseconds
+      ).toUTCString()}; path=/; ${
+        process.env.NODE_ENV === "production" ? "secure; " : ""
+      }SameSite=Strict`;
 
       // Show a success toast
-      toast.success("Registration successful!");
-      setName("");
-      setEmail("");
-      setPassword("");
+      toast.success(
+        "Your sign-in request was successful. You will be redirected shortly."
+      );
+      const redirect = searchParams.get("redirect");
+      // Redirect to the dashboard or homepage
+      router.replace(redirect ? redirect : "/");
     } catch (error: any) {
       const errorMessage = error.message || "An unexpected error occurred.";
       setError(errorMessage);
@@ -69,19 +75,8 @@ export default function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleRegister}>
+    <form onSubmit={handleLogin}>
       <div className="grid gap-4">
-        <div className="grid gap-2">
-          <Label htmlFor="first-name">Name</Label>
-          <Input
-            id="first-name"
-            placeholder="Max"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
           <Input
@@ -94,7 +89,12 @@ export default function RegisterForm() {
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="password">Password</Label>
+          <div className="flex items-center">
+            <Label htmlFor="password">Password</Label>
+            <Link href="#" className="ml-auto inline-block text-sm underline">
+              Forgot your password?
+            </Link>
+          </div>
           <Input
             id="password"
             type="password"
@@ -103,9 +103,8 @@ export default function RegisterForm() {
             required
           />
         </div>
-        {error && <div className="text-red-500 text-sm">{error}</div>}
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Registering..." : "Create an account"}
+          {isLoading ? "Logging in..." : "Login"}
         </Button>
       </div>
     </form>

@@ -1,44 +1,39 @@
+// middleware.ts
 import { type NextRequest, NextResponse } from "next/server";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/app/firebase"; // Adjust the path to your Firebase config
 
 const PUBLIC_PATHS = ["/register", "/login", "/reset-password"];
 
-function redirectToLogin(request: any) {
+function redirectToLogin(request: NextRequest) {
   const url = new URL("/login", request.url);
   url.searchParams.set("redirect", request.nextUrl.pathname);
   return NextResponse.redirect(url);
 }
 
-function redirectToPath(request: any, path = "/") {
+function redirectToPath(request: NextRequest, path = "/") {
   const url = new URL(path, request.url);
   return NextResponse.redirect(url);
 }
 
 export async function middleware(request: NextRequest) {
-  const user = await new Promise((resolve) => {
-    onAuthStateChanged(auth, (user) => {
-      resolve(user);
-    });
-  });
+  const cookies = request.cookies.get("auth-token");
 
-  const isPublicPath = PUBLIC_PATHS.includes(request.nextUrl.pathname);
-  const isAuthenticated = !!user;
-
-  // If the user is not authenticated and trying to access a protected path, redirect to login
-  if (!isAuthenticated && !isPublicPath) {
-    return redirectToLogin(request);
+  // If there is no token, user is not authenticated
+  if (!cookies) {
+    const isPublicPath = PUBLIC_PATHS.includes(request.nextUrl.pathname);
+    if (!isPublicPath) {
+      return redirectToLogin(request);
+    }
+    return NextResponse.next();
   }
 
-  // If the user is authenticated and trying to access a public path, redirect to the home page
-  if (isAuthenticated && isPublicPath) {
+  // Assuming the token is in cookies and needs to be validated
+  // You would need to validate the token on the client side or via an endpoint here
+
+  // If the token is valid
+  const isPublicPath = PUBLIC_PATHS.includes(request.nextUrl.pathname);
+  if (isPublicPath) {
     const redirectSearchParams = request.nextUrl.searchParams.get("redirect");
-
-    if (redirectSearchParams) {
-      return redirectToPath(request, redirectSearchParams);
-    }
-
-    return redirectToPath(request);
+    return redirectToPath(request, redirectSearchParams || "/");
   }
 
   return NextResponse.next();

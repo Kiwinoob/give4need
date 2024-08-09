@@ -25,7 +25,6 @@ export default function RegisterPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Render the client-side form component */}
           <RegisterForm />
           <div className="mt-4 text-center text-sm">
             Already have an account?{" "}
