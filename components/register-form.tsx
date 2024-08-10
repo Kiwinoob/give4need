@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Icons } from "./icons";
 
 export default function RegisterForm() {
   const [name, setName] = useState("");
@@ -103,9 +104,10 @@ export default function RegisterForm() {
             required
           />
         </div>
-        {error && <div className="text-red-500 text-sm">{error}</div>}
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Registering..." : "Create an account"}
+
+        <Button type="submit" disabled={isLoading}>
+          {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
+          Create account
         </Button>
       </div>
     </form>

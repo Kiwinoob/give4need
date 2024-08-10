@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Home } from "@/components/home";
 export const metadata: Metadata = {
-  title: "home",
-  description: "home",
+  title: "Home",
+  description: "Home",
 };
 
 export default async function Index() {
