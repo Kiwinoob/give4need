@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { auth } from "@/app/firebase";
-import { signOut } from "firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 
 export function UserNav() {
@@ -25,17 +25,24 @@ export function UserNav() {
     name: "",
     email: "",
   });
-
   useEffect(() => {
-    const user = auth.currentUser;
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setProfile({
+          avatarUrl: user.photoURL || "",
+          name: user.displayName || "Anonymous",
+          email: user.email || "No email",
+        });
+      } else {
+        setProfile({
+          avatarUrl: "",
+          name: "",
+          email: "",
+        });
+      }
+    });
 
-    if (user) {
-      setProfile({
-        avatarUrl: user.photoURL || "",
-        name: user.displayName || "Anonymous",
-        email: user.email || "No email",
-      });
-    }
+    return () => unsubscribe(); // Cleanup subscription on unmount
   }, []);
 
   const handleLogout = async () => {

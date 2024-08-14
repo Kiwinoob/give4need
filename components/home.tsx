@@ -1,107 +1,142 @@
 "use client"; // Mark this component as a client-side component
-import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { db } from "@/app/firebase";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { collection, getDocs, DocumentData } from "firebase/firestore";
+import { formatDistanceToNow } from "date-fns";
+import {
+  collection,
+  getDocs,
+  DocumentData,
+  getDoc,
+  doc,
+} from "firebase/firestore";
+import { CircleUser } from "lucide-react";
 
-interface Product {
-  name: string;
+interface Item {
+  title: string;
   condition: string;
   images: string[];
-  isProtected: boolean;
-  timeAgo: string;
+  datetime: string;
+  userId: string;
 }
+
+interface UserProfile {
+  displayName: string;
+  photoURL: string;
+}
+
 export function Home() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
+  const [userProfiles, setUserProfiles] = useState<Record<string, UserProfile>>(
+    {}
+  );
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const querySnapshot = await getDocs(collection(db, "products"));
-      const productList: Product[] = [];
-      querySnapshot.forEach((doc: DocumentData) => {
-        console.log(doc.id, " => ", doc.data()); // Log document data for debugging
-        productList.push(doc.data() as Product);
-        console.log("product" + doc.data());
-      });
-      setProducts(productList);
+      try {
+        const querySnapshot = await getDocs(collection(db, "items"));
+        const itemList: Item[] = [];
+        const userIdSet = new Set<string>();
+
+        querySnapshot.forEach((doc: DocumentData) => {
+          const item = doc.data() as Item;
+          itemList.push(item);
+          userIdSet.add(item.userId);
+        });
+
+        setItems(itemList);
+
+        // Fetch user profiles
+        const userProfiles: Record<string, UserProfile> = {};
+        await Promise.all(
+          Array.from(userIdSet).map(async (userId) => {
+            const userDocRef = doc(db, "users", userId);
+            const userDoc = await getDoc(userDocRef);
+            if (userDoc.exists()) {
+              userProfiles[userId] = userDoc.data() as UserProfile;
+            } else {
+              userProfiles[userId] = {
+                displayName: "Unknown User",
+                photoURL: "",
+              };
+            }
+          })
+        );
+
+        setUserProfiles(userProfiles);
+      } catch (error) {
+        console.error("Error fetching items or user profiles:", error);
+      }
     };
 
     fetchProducts();
   }, []);
 
   return (
-    <div className="flex items-center">
-      {/* <div className="container mx-auto py-8">
-        {/* Search and Filters 
-        <div className="flex items-center justify-between mb-6">
-          <div className="w-full max-w-lg">
-            <input
-              type="text"
-              placeholder="Search for anything and everything"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            />
-          </div>
-          <div className="flex space-x-2">
-            <button className="px-4 py-2 bg-gray-200 rounded-full">
-              Bicycle
-            </button>
-            <button className="px-4 py-2 bg-gray-200 rounded-full">
-              Coffee Table
-            </button>
-            <button className="px-4 py-2 bg-gray-200 rounded-full">Lego</button>
-            <button className="px-4 py-2 bg-gray-200 rounded-full">Ikea</button>
-            <button className="px-4 py-2 bg-gray-200 rounded-full">
-              Brompton
-            </button>
-            <button className="px-4 py-2 bg-gray-200 rounded-full">
-              Plants
-            </button>
-          </div>
-          <div>
-            <button className="px-4 py-2 bg-green-600 text-white rounded-lg">
-              Search
-            </button>
-          </div>
-        </div> */}
-
-      {/* Product Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {products.map((product, index) => (
-          <Card key={index} className="w-full max-w-xs rounded-xl border width">
-            <div className="grid gap-4 p-4">
-              <div className="aspect-[4/5] w-full overflow-hidden rounded-xl">
-                <img
-                  src="https://store.storeimages.cdn-apple.com/8756/as-images.apple.com/is/iphone15pro-digitalmat-gallery-1-202309?wid=728&hei=666&fmt=png-alpha&.v=1693346851364"
-                  alt="Product image"
-                  width="250"
-                  height="250"
-                  className="aspect-[4/5] object-cover border w-full"
-                />
+    <div className="space-y-4 p-8 pt-4">
+      <div className="flex justify-end">
+        <Button size="sm" onClick={() => router.push("/create-listing")}>
+          Create Listing
+        </Button>
+      </div>
+      <div className="flex w-full items-center space-y-2">
+        <h2 className="text-2xl font-bold">New Products</h2>
+      </div>
+      <div className="flex items-center">
+        {/* Product Grid */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {items.map((item, index) => (
+            <Card
+              key={index}
+              className="w-full max-w-xs rounded-xl border width hover:shadow-lg transition-shadow"
+            >
+              <div className="grid gap-4 p-4">
+                <div className="aspect-[4/5] w-full overflow-hidden rounded-xl">
+                  <img
+                    src={item.images[0]}
+                    alt="Product image"
+                    width="250"
+                    height="250"
+                    className="aspect-[4/5] object-cover border w-full"
+                  />
+                </div>
+                <div className="grid gap-1.5">
+                  <h3 className="font-semibold text-sm md:text-base">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {item.condition}
+                  </p>
+                </div>
               </div>
-              <div className="grid gap-1.5">
-                <h3 className="font-semibold text-sm md:text-base">
-                  {product.name}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {product.condition}
-                </p>
-              </div>
-            </div>
-            <CardFooter className="flex items-start space-x-4 justify-start">
-              <Avatar>
-                <AvatarImage src="/placeholder-user.jpg" alt="User avatar" />
-                <AvatarFallback>J</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="text-sm font-medium">peterng11</p>
-                <p className="text-xs text-muted-foreground">22 days ago</p>
-              </div>
-            </CardFooter>
-          </Card>
-        ))}
+              <CardFooter className="flex items-start space-x-4 justify-start">
+                <Avatar>
+                  <AvatarImage
+                    src={userProfiles[item.userId]?.photoURL || ""}
+                    alt="User avatar"
+                  />
+                  <AvatarFallback>
+                    <CircleUser className="h-5 w-5" />
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-sm font-medium">
+                    {userProfiles[item.userId]?.displayName || "Unknown User"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatDistanceToNow(new Date(item.datetime), {
+                      addSuffix: true,
+                    })}
+                  </p>
+                </div>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );

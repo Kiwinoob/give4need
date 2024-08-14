@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "./icons";
+import { db } from "@/app/firebase"; // Import your Firebase setup
+import { doc, setDoc } from "firebase/firestore";
 
 export default function RegisterForm() {
   const [name, setName] = useState("");
@@ -52,8 +54,14 @@ export default function RegisterForm() {
         email,
         password
       );
+      const user = userCredential.user;
       // Update the user's profile with the name
       await updateProfile(userCredential.user, { displayName: name });
+
+      // Store user data in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        displayName: name,
+      });
 
       // Show a success toast
       toast.success("Registration successful!");
