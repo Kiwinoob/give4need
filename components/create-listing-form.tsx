@@ -23,9 +23,11 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { db, storage } from "@/app/firebase"; // Import your Firebase setup
 import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
-
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getAuth } from "firebase/auth";
+import { useLoadScript, Autocomplete } from "@react-google-maps/api";
+
+const libraries: "places"[] = ["places"];
 
 export default function CreateListingForm() {
   const [images, setImages] = useState<File[]>([]);
@@ -34,10 +36,17 @@ export default function CreateListingForm() {
   const [listingTitle, setListingTitle] = useState("");
   const [brand, setBrand] = useState("");
   const [description, setDescription] = useState("");
-  const [meetupLocation, setMeetupLocation] = useState(""); // Add meetup location state
+  const [meetupLocation, setMeetupLocation] = useState("");
+  const [autocomplete, setAutocomplete] =
+    useState<google.maps.places.Autocomplete | null>(null);
   const router = useRouter();
   const auth = getAuth();
   const user = auth.currentUser; // Get the current user
+
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries,
+  });
 
   const conditions = [
     { label: "New", description: "Brand new, never used" },
@@ -117,6 +126,22 @@ export default function CreateListingForm() {
     } catch (error) {
       console.error("Error creating listing:", error);
     }
+  };
+
+  if (!isLoaded) {
+    return <p>Loading...</p>;
+  }
+  const handlePlaceChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+      setMeetupLocation(place.formatted_address || "");
+    } else {
+      console.log("Autocomplete is not loaded yet!");
+    }
+  };
+
+  const onLoad = (autocompleteInstance: google.maps.places.Autocomplete) => {
+    setAutocomplete(autocompleteInstance);
   };
 
   return (
@@ -256,12 +281,17 @@ export default function CreateListingForm() {
                 )}
                 <div className="grid gap-2">
                   <Label htmlFor="meetup-location">Meetup Location</Label>
-                  <Input
-                    id="meetup-location"
-                    value={meetupLocation}
-                    onChange={(e) => setMeetupLocation(e.target.value)}
-                    placeholder="Enter meetup location"
-                  />
+                  <Autocomplete
+                    onLoad={onLoad}
+                    onPlaceChanged={handlePlaceChanged}
+                  >
+                    <Input
+                      id="meetup-location"
+                      value={meetupLocation}
+                      onChange={(e) => setMeetupLocation(e.target.value)}
+                      placeholder="Enter meetup location"
+                    />
+                  </Autocomplete>
                 </div>
               </div>
             </div>

@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "./icons";
-import { db } from "@/app/firebase"; // Import your Firebase setup
 import { doc, setDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "@/app/firebase"; // Import your Firebase setup
 
 export default function RegisterForm() {
   const [name, setName] = useState("");
@@ -56,11 +57,26 @@ export default function RegisterForm() {
       );
       const user = userCredential.user;
       // Update the user's profile with the name
-      await updateProfile(userCredential.user, { displayName: name });
+
+      const seed = Math.random().toString(36).substring(7); // Random seed for avatar
+      const photoUrl = `https://api.dicebear.com/9.x/personas/svg?seed=${seed}&backgroundColor=c0aede`;
+      const response = await fetch(photoUrl);
+      const blob = await response.blob();
+
+      // Upload avatar to Firebase Storage
+      const imageRef = ref(storage, `avatars/${user.uid}.svg`);
+      const snapshot = await uploadBytes(imageRef, blob);
+      const downloadUrl = await getDownloadURL(snapshot.ref);
+
+      await updateProfile(userCredential.user, {
+        displayName: name,
+        photoURL: downloadUrl,
+      });
 
       // Store user data in Firestore
       await setDoc(doc(db, "users", user.uid), {
         displayName: name,
+        photoUrl: downloadUrl,
       });
 
       // Show a success toast
