@@ -248,7 +248,6 @@ export default function CreateListingForm() {
                   <SelectContent>
                     <SelectItem value="electronics">Electronics</SelectItem>
                     <SelectItem value="clothing">Clothing</SelectItem>
-                    <SelectItem value="home">Home</SelectItem>
                     <SelectItem value="sports">Sports</SelectItem>
                     <SelectItem value="toys">Toys</SelectItem>
                   </SelectContent>

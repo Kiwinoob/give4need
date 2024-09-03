@@ -38,7 +38,7 @@ export function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchItems = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "items"));
         const itemList: Item[] = [];
@@ -75,7 +75,7 @@ export function Home() {
       }
     };
 
-    fetchProducts();
+    fetchItems();
   }, []);
 
   return (
@@ -86,7 +86,7 @@ export function Home() {
         </Button>
       </div>
       <div className="flex w-full items-center space-y-2">
-        <h2 className="text-2xl font-bold">New Products</h2>
+        <h2 className="text-2xl font-bold">New Items</h2>
       </div>
       <div className="flex items-center">
         {/* Product Grid */}

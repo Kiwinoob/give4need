@@ -3,8 +3,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, LineChart, Package, ShoppingCart, Users } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-
 const navLinks = [
   {
     title: "Home",
@@ -13,22 +11,22 @@ const navLinks = [
   },
   {
     title: "Nearby",
-    href: "/orders",
+    href: "#",
     icon: ShoppingCart,
   },
   {
     title: "Listing",
-    href: "/products",
+    href: "#",
     icon: Package,
   },
   {
     title: "Inbox",
-    href: "/customers",
+    href: "#",
     icon: Users,
   },
   {
     title: "Analytics",
-    href: "/analytics",
+    href: "#",
     icon: LineChart,
   },
 ];
@@ -62,11 +60,6 @@ export function SideBar() {
                   >
                     <Icon className="h-4 w-4" />
                     {link.title}
-                    {link.title === "Orders" && (
-                      <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                        6
-                      </Badge>
-                    )}
                   </Link>
                 );
               })}
