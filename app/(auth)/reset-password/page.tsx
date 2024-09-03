@@ -10,8 +10,8 @@ import Link from "next/link";
 import ResetForm from "@/components/reset-password-form";
 
 export const metadata: Metadata = {
-  title: "Reset ",
-  description: "Login to your account",
+  title: "Reset Password ",
+  description: "Reset password for your account",
 };
 
 export default function ResetPasswordPage() {
@@ -22,7 +22,7 @@ export default function ResetPasswordPage() {
           <CardHeader>
             <CardTitle className="text-2xl">Reset Your Password</CardTitle>
             <CardDescription>
-              Type in your email and we'll send you a link to reset your
+              Type in your email and we&apos;ll send you a link to reset your
               password
             </CardDescription>
           </CardHeader>
