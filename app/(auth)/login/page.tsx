@@ -1,6 +1,11 @@
 // page.tsx
+import { Suspense } from "react";
 import { type Metadata } from "next";
 import LoginForm from "@/components/login-form"; // Import the client-side component
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -14,6 +19,40 @@ export const metadata: Metadata = {
   title: "Login",
   description: "Login to your account",
 };
+function LoginFormFallback() {
+  return (
+    <form>
+      <div className="grid gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="m@example.com"
+            autoCapitalize="none"
+            autoComplete="email"
+            autoCorrect="off"
+          />
+        </div>
+        <div className="grid gap-2">
+          <div className="flex items-center">
+            <Label htmlFor="password">Password</Label>
+            <Link
+              href="/reset-password"
+              className="ml-auto inline-block text-sm underline"
+            >
+              Forgot your password?
+            </Link>
+          </div>
+          <Input id="password" type="password" required />
+        </div>
+        <button type="submit" className={cn(buttonVariants())}>
+          Sign In with Email
+        </button>
+      </div>
+    </form>
+  );
+}
 
 export default function LoginPage() {
   return (
@@ -27,7 +66,9 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <LoginForm />
+            <Suspense fallback={<LoginFormFallback />}>
+              <LoginForm />
+            </Suspense>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
               <Link href="/register" className="underline">
