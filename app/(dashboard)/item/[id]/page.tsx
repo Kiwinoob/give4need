@@ -30,7 +30,7 @@ export default async function ItemPage({ params }: { params: { id: string } }) {
   };
 
   return (
-    <div className="space-p-8">
+    <div className="space-y-4 p-8 pt-4">
       <ItemDetails item={item} />
     </div>
   );

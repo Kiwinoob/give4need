@@ -1,5 +1,6 @@
 "use client"; // Mark this component as a client-side component
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link"; // Import Link
 import { db } from "@/app/firebase";
 import { Card, CardFooter } from "@/components/ui/card";
@@ -96,7 +97,7 @@ export function Home() {
               <Card className="w-full max-w-xs rounded-xl border width hover:shadow-lg transition-shadow">
                 <div className="grid gap-4 p-4">
                   <div className="aspect-[4/5] w-full overflow-hidden rounded-xl">
-                    <img
+                    <Image
                       src={item.images[0]}
                       alt="Product image"
                       width="250"

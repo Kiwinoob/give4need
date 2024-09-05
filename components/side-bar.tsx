@@ -21,7 +21,7 @@ const navLinks = [
   },
   {
     title: "Inbox",
-    href: "#",
+    href: "/inbox",
     icon: Users,
   },
   {

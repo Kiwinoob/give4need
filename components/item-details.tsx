@@ -1,4 +1,6 @@
 "use client"; // Mark this component as a client-side component
+import Image from "next/image";
+import { useRouter } from "next/navigation"; // For client-side navigation
 import { Button } from "@/components/ui/button";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/app/firebase";
@@ -13,6 +15,8 @@ import {
   CarouselNext,
 } from "@/components/ui/carousel";
 import { MapPin, Check, CircleUser } from "lucide-react";
+import Talk from "talkjs";
+import { getAuth } from "firebase/auth";
 
 interface Item {
   id: string;
@@ -32,7 +36,10 @@ interface UserProfile {
 
 export default function ItemDetails({ item }: { item: Item }) {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-
+  const [isOwner, setIsOwner] = useState(false);
+  const router = useRouter();
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -51,7 +58,57 @@ export default function ItemDetails({ item }: { item: Item }) {
     };
 
     fetchUserProfile();
-  }, [item.userId]);
+
+    // Check if the current user is the owner of the item
+    if (currentUser && currentUser.uid === item.userId) {
+      setIsOwner(true);
+    }
+  }, [item.userId, currentUser]);
+
+  const handleContactDonor = async () => {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser; // Get the current user
+      // Ensure TalkJS is loaded before initializing
+      await Talk.ready;
+
+      const currentUser = new Talk.User({
+        id: user?.uid || "Unknown ID",
+        name: user?.displayName || "Unknown Donor",
+        photoUrl: user?.photoURL || "/public/circle-user.svg",
+      });
+
+      const donorUser = new Talk.User({
+        id: item.userId,
+        name: userProfile?.displayName || "Unknown Donor",
+        photoUrl: userProfile?.photoUrl || "/public/circle-user.svg",
+      });
+
+      const session = new Talk.Session({
+        appId: "tbVyGhle",
+        me: currentUser,
+      });
+
+      const conversation = session.getOrCreateConversation(
+        Talk.oneOnOneId(currentUser, donorUser)
+      );
+      conversation.setParticipant(currentUser);
+      conversation.setParticipant(donorUser);
+      // Prepare item details to be sent as the first message
+      const itemTitle = `Item: ${item.title}`;
+
+      const conversationId = Talk.oneOnOneId(currentUser, donorUser);
+
+      // Navigate to the chat page with the conversation ID
+      router.push(
+        `/inbox/chat/${conversationId}?itemDetails=${encodeURIComponent(
+          itemTitle
+        )}`
+      );
+    } catch (error) {
+      console.error("Error starting chat:", error);
+    }
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto p-4 md:p-8">
@@ -60,7 +117,7 @@ export default function ItemDetails({ item }: { item: Item }) {
           <CarouselContent>
             {item.images.map((image, index) => (
               <CarouselItem key={index}>
-                <img
+                <Image
                   src={image}
                   alt="Item Image"
                   width={400}
@@ -111,9 +168,13 @@ export default function ItemDetails({ item }: { item: Item }) {
             </p>
           </div>
         </div>
-        <div className="flex gap-4">
-          <Button size="lg">Contact Donor</Button>
-        </div>
+        {!isOwner && (
+          <div className="flex gap-4">
+            <Button size="lg" onClick={handleContactDonor}>
+              Contact Donor
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

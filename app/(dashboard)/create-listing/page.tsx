@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 };
 export default function CreateListing() {
   return (
-    <div className="space-p-8">
+    <div className="space-y-4 p-8 pt-4">
       <h2 className="text-2xl font-bold">Create New Item Listing</h2>
       <CreateListingForm />
     </div>

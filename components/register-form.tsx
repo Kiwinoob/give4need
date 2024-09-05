@@ -80,14 +80,40 @@ export default function RegisterForm() {
       });
 
       // Show a success toast
-      toast.success("Registration successful!");
+      toast.success("Registration successful!", {
+        description: "Your sign up request was successful",
+      });
       setName("");
       setEmail("");
       setPassword("");
     } catch (error: any) {
       const errorMessage = error.message || "An unexpected error occurred.";
       setError(errorMessage);
-      toast.error(errorMessage);
+      toast.error(errorMessage || "Something went wrong.", {
+        description: "Your sign up request failed. Please try again.",
+      });
+
+      // Delete the user from Firebase Authentication if Firestore fails
+      if (auth.currentUser) {
+        try {
+          await auth.currentUser.delete();
+          toast.info(
+            "Account creation failed. User deleted from authentication."
+          );
+          toast.info("Account Registration failed", {
+            description: "Your sign up request was failed please try again",
+          });
+        } catch (deleteError) {
+          console.error(
+            "Failed to delete user after Firestore error:",
+            deleteError
+          );
+          toast.error("Failed to delete user after Firestore error.");
+          toast.error("Something went wrong.", {
+            description: "Failed to delete user, Please user another email",
+          });
+        }
+      }
     } finally {
       setIsLoading(false);
     }

@@ -1,6 +1,7 @@
 "use client"; // Mark this component as a client-side component
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   Card,
   CardHeader,
@@ -179,7 +180,7 @@ export default function CreateListingForm() {
               <div className="grid grid-cols-3 gap-4">
                 {images.map((image, index) => (
                   <div key={index} className="relative rounded-lg border">
-                    <img
+                    <Image
                       src={URL.createObjectURL(image)}
                       width={250}
                       height={250}
