@@ -31,7 +31,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { getAuth } from "firebase/auth";
-import { useLoadScript, Autocomplete } from "@react-google-maps/api";
+//import { useLoadScript, Autocomplete } from "@react-google-maps/api";
 
 const libraries: "places"[] = ["places"];
 
@@ -56,10 +56,10 @@ export default function EditListingForm({ id }: EditListingFormProps) {
   const auth = getAuth();
   const user = auth.currentUser;
 
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-    libraries,
-  });
+  // const { isLoaded } = useLoadScript({
+  //   googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+  //   libraries,
+  // });
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -230,22 +230,22 @@ export default function EditListingForm({ id }: EditListingFormProps) {
     }
   };
 
-  if (!isLoaded) {
-    return <p>Loading...</p>;
-  }
+  // if (!isLoaded) {
+  //   return <p>Loading...</p>;
+  // }
 
-  const handlePlaceChanged = () => {
-    if (autocomplete !== null) {
-      const place = autocomplete.getPlace();
-      setMeetupLocation(place.formatted_address || "");
-    } else {
-      console.log("Autocomplete is not loaded yet!");
-    }
-  };
+  // const handlePlaceChanged = () => {
+  //   if (autocomplete !== null) {
+  //     const place = autocomplete.getPlace();
+  //     setMeetupLocation(place.formatted_address || "");
+  //   } else {
+  //     console.log("Autocomplete is not loaded yet!");
+  //   }
+  // };
 
-  const onLoad = (autocompleteInstance: google.maps.places.Autocomplete) => {
-    setAutocomplete(autocompleteInstance);
-  };
+  // const onLoad = (autocompleteInstance: google.maps.places.Autocomplete) => {
+  //   setAutocomplete(autocompleteInstance);
+  // };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mx-auto py-6 sm:py-8 md:py-10">
@@ -409,7 +409,7 @@ export default function EditListingForm({ id }: EditListingFormProps) {
               {/* Meetup Location */}
               <div className="space-y-2">
                 <Label htmlFor="meetupLocation">Meetup Location</Label>
-                <Autocomplete
+                {/* <Autocomplete
                   onLoad={onLoad}
                   onPlaceChanged={handlePlaceChanged}
                 >
@@ -418,7 +418,13 @@ export default function EditListingForm({ id }: EditListingFormProps) {
                     value={meetupLocation}
                     onChange={(e) => setMeetupLocation(e.target.value)}
                   />
-                </Autocomplete>
+                </Autocomplete> */}
+                <Input
+                  id="meetupLocation"
+                  value={meetupLocation}
+                  onChange={(e) => setMeetupLocation(e.target.value)}
+                  placeholder="Enter meetup location"
+                />
               </div>
             </div>
           </CardContent>
