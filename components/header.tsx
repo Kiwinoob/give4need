@@ -7,9 +7,8 @@ import {
   LineChart,
   Menu,
   Package,
-  Package2,
   ShoppingCart,
-  Users,
+  Mail,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -34,7 +33,7 @@ export const navLinks = [
   {
     title: "Inbox",
     href: "/inbox",
-    icon: Users,
+    icon: Mail,
   },
   {
     title: "Analytics",
@@ -56,6 +55,10 @@ export function Header() {
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col">
           <nav className="grid gap-2 text-lg font-medium">
+            <Link href="/" className="flex items-center gap-2 font-semibold">
+              <Package className="h-6 w-6" />
+              <span className="">Give4Need</span>
+            </Link>
             {navLinks.map((link) => {
               const Icon = link.icon;
               return (

@@ -247,10 +247,15 @@ export default function CreateListingForm() {
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="electronics">Electronics</SelectItem>
-                    <SelectItem value="clothing">Clothing</SelectItem>
-                    <SelectItem value="sports">Sports</SelectItem>
-                    <SelectItem value="toys">Toys</SelectItem>
+                    <SelectItem value="Electronics">Electronics</SelectItem>
+                    <SelectItem value="Phone Accesssories">
+                      Phone Accesssories
+                    </SelectItem>
+                    <SelectItem value="Tablet & Computer Accesssories">
+                      Tablet & Computer Accesssories
+                    </SelectItem>
+                    <SelectItem value="Clothing">Clothing</SelectItem>
+                    <SelectItem value="Toys">Toys</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

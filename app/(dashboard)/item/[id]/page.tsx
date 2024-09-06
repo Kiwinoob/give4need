@@ -21,6 +21,7 @@ export default async function ItemPage({ params }: { params: { id: string } }) {
     id: itemSnapshot.id,
     title: itemData.title,
     category: itemData.category,
+    brand: itemData.brand,
     description: itemData.description,
     condition: itemData.condition,
     meetupLocation: itemData.meetupLocation,

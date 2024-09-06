@@ -22,6 +22,7 @@ interface Item {
   id: string;
   title: string;
   category: string;
+  brand: string;
   description: string;
   condition: string;
   meetupLocation: string;
@@ -110,8 +111,13 @@ export default function ItemDetails({ item }: { item: Item }) {
     }
   };
 
+  // Format the meetup location for Google Maps URL
+  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    item.meetupLocation
+  )}`;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto p-4 md:p-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto p-4 md:p-8">
       <div className="flex justify-center">
         <Carousel className="w-full max-w-md">
           <CarouselContent>
@@ -133,7 +139,9 @@ export default function ItemDetails({ item }: { item: Item }) {
       </div>
       <div className="flex flex-col gap-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold">{item.title}</h1>
+          <h2 className=" text-2xl font-bold sm:text-4xl lg:text-5xl font-bold">
+            {item.title}
+          </h2>
           <p className="text">{item.category}</p>
           <p className="text-xs text-muted-foreground">
             {formatDistanceToNow(new Date(item.datetime), {
@@ -142,16 +150,31 @@ export default function ItemDetails({ item }: { item: Item }) {
           </p>
         </div>
         <div>
-          <h2 className="text-xl font-bold">Description</h2>
+          <h2 className="text-xl font-bold sm:text-2xl lg:text-1xl">Brand</h2>
+          <p className="text-base">{item.brand}</p>
+        </div>
+        <div>
+          <h2 className="text-xl font-bold sm:text-2xl lg:text-1xl">
+            Description
+          </h2>
           <p className="text-base">{item.description}</p>
         </div>
         <div className="flex items-center gap-2">
           <Check className="w-5 h-5 text-primary" />
-          <span className="text-base">Condition - {item.condition}</span>
+          <span className="text-base">{item.condition}</span>
         </div>
         <div className="flex items-center gap-2">
           <MapPin className="w-5 h-5 text-primary" />
-          <span className="text-base">Location - {item.meetupLocation}</span>
+          <span className="text-base">
+            <a
+              href={googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-base underline text-blue-500"
+            >
+              {item.meetupLocation}
+            </a>
+          </span>
         </div>
 
         <h2 className="text-xl font-bold">Donor</h2>
@@ -172,6 +195,16 @@ export default function ItemDetails({ item }: { item: Item }) {
           <div className="flex gap-4">
             <Button size="lg" onClick={handleContactDonor}>
               Contact Donor
+            </Button>
+          </div>
+        )}
+        {isOwner && (
+          <div className="flex gap-4">
+            <Button
+              size="lg"
+              onClick={() => router.push(`/edit-listing/${item.id}`)}
+            >
+              Edit
             </Button>
           </div>
         )}

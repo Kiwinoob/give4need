@@ -15,7 +15,7 @@ export default function ChatPage({
 
   return (
     <div className="space-y-4 p-8 pt-4">
-      <h2 className="text-2xl font-bold">Chat</h2>
+      <h2 className="text-2xl font-bold sm:text-4xl lg:text-5xl">Chat</h2>
       <Chat conversationId={conversationId} />
     </div>
   );
