@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation"; // For client-side navigation
 import { Button } from "@/components/ui/button";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/app/firebase";
 import { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
@@ -14,6 +14,7 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/components/ui/carousel";
+import { toast } from "sonner";
 import { MapPin, Check, CircleUser } from "lucide-react";
 import Talk from "talkjs";
 import { getAuth } from "firebase/auth";
@@ -29,6 +30,7 @@ interface Item {
   images: string[];
   datetime: string;
   userId: string;
+  available: boolean;
 }
 interface UserProfile {
   displayName: string;
@@ -38,6 +40,7 @@ interface UserProfile {
 export default function ItemDetails({ item }: { item: Item }) {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isOwner, setIsOwner] = useState(false);
+  const [available, setAvailable] = useState(item.available);
   const router = useRouter();
   const auth = getAuth();
   const currentUser = auth.currentUser;
@@ -116,6 +119,34 @@ export default function ItemDetails({ item }: { item: Item }) {
     item.meetupLocation
   )}`;
 
+  // Function to mark the listing as completed
+  const toggleAvailability = async () => {
+    try {
+      const itemDocRef = doc(db, "items", item.id); // Reference to the item document
+
+      // Toggle the availability in Firestore
+      await updateDoc(itemDocRef, {
+        available: !available, // Toggle the availability based on the local state
+      });
+
+      // Update the local state to reflect the change
+      setAvailable(!available);
+
+      // Show toast notification
+      toast.success(
+        available ? "Marked as Completed" : "Marked as Uncompleted",
+        {
+          description: item.title + " has been updated.",
+        }
+      );
+
+      // Refresh the page or re-fetch the data
+      router.refresh();
+    } catch (error) {
+      console.error("Error updating item availability:", error);
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto p-4 md:p-8">
       <div className="flex justify-center">
@@ -125,7 +156,7 @@ export default function ItemDetails({ item }: { item: Item }) {
               <CarouselItem key={index}>
                 <Image
                   src={image}
-                  alt="Item Image"
+                  alt={item.title}
                   width={400}
                   height={400}
                   className="rounded-lg object-cover w-full aspect-square relative"
@@ -205,6 +236,14 @@ export default function ItemDetails({ item }: { item: Item }) {
               onClick={() => router.push(`/edit-listing/${item.id}`)}
             >
               Edit
+            </Button>
+            {/* Add a button to mark the item as completed */}
+            <Button
+              size="lg"
+              variant={available ? "secondary" : "default"}
+              onClick={toggleAvailability}
+            >
+              {available ? "Mark as Uncompleted" : "Mark as Completed"}
             </Button>
           </div>
         )}

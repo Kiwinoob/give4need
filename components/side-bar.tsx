@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, LineChart, Package, ShoppingCart, Mail } from "lucide-react";
+import { Home, LineChart, Package, HandHeart, Mail } from "lucide-react";
 
 const navLinks = [
   {
@@ -11,8 +11,8 @@ const navLinks = [
   },
   {
     title: "Recommendations",
-    href: "#",
-    icon: ShoppingCart,
+    href: "/recommendations",
+    icon: HandHeart,
   },
   {
     title: "Listing",
@@ -23,11 +23,6 @@ const navLinks = [
     title: "Inbox",
     href: "/inbox",
     icon: Mail,
-  },
-  {
-    title: "Analytics",
-    href: "#",
-    icon: LineChart,
   },
 ];
 

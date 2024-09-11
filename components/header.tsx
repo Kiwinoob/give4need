@@ -2,14 +2,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import {
-  Home,
-  LineChart,
-  Menu,
-  Package,
-  ShoppingCart,
-  Mail,
-} from "lucide-react";
+import { Home, LineChart, Menu, Package, HandHeart, Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { UserNav } from "@/components/user-nav";
@@ -21,9 +14,9 @@ export const navLinks = [
     icon: Home,
   },
   {
-    title: "Nearby",
-    href: "#",
-    icon: ShoppingCart,
+    title: "Recommendations",
+    href: "/recommendations",
+    icon: HandHeart,
   },
   {
     title: "Listing",
@@ -34,11 +27,6 @@ export const navLinks = [
     title: "Inbox",
     href: "/inbox",
     icon: Mail,
-  },
-  {
-    title: "Analytics",
-    href: "#",
-    icon: LineChart,
   },
 ];
 

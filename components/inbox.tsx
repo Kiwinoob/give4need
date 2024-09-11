@@ -44,7 +44,7 @@ export default function InboxComponent() {
 
   return (
     <div
-      className="inbox-container h-[500px] w-full"
+      className="inbox-container h-[500px] w-full mx-auto py-6 sm:py-8 md:py-10"
       ref={inboxContainer}
     ></div>
   );

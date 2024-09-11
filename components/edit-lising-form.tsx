@@ -20,8 +20,19 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { db, storage } from "@/app/firebase";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import {
@@ -31,7 +42,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { getAuth } from "firebase/auth";
-//import { useLoadScript, Autocomplete } from "@react-google-maps/api";
+import { useLoadScript, Autocomplete } from "@react-google-maps/api";
 
 const libraries: "places"[] = ["places"];
 
@@ -49,6 +60,8 @@ export default function EditListingForm({ id }: EditListingFormProps) {
   const [brand, setBrand] = useState("");
   const [description, setDescription] = useState("");
   const [meetupLocation, setMeetupLocation] = useState("");
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
   const [autocomplete, setAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
   const [item, setItem] = useState<any>(null);
@@ -56,10 +69,10 @@ export default function EditListingForm({ id }: EditListingFormProps) {
   const auth = getAuth();
   const user = auth.currentUser;
 
-  // const { isLoaded } = useLoadScript({
-  //   googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-  //   libraries,
-  // });
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries,
+  });
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -144,7 +157,9 @@ export default function EditListingForm({ id }: EditListingFormProps) {
         category: selectedCategory,
         brand,
         description,
-        meetupLocation, // Include meetup location in the document
+        meetupLocation,
+        latitude,
+        longitude,
       };
 
       // Update the document with new details
@@ -202,11 +217,6 @@ export default function EditListingForm({ id }: EditListingFormProps) {
       return;
     }
 
-    const confirmDelete = confirm(
-      "Are you sure you want to delete this listing?"
-    );
-    if (!confirmDelete) return;
-
     try {
       // Step 1: Delete all images from Firebase Storage
       for (const imageUrl of currentImages) {
@@ -230,22 +240,24 @@ export default function EditListingForm({ id }: EditListingFormProps) {
     }
   };
 
-  // if (!isLoaded) {
-  //   return <p>Loading...</p>;
-  // }
+  if (!isLoaded) {
+    return <p>Loading...</p>;
+  }
 
-  // const handlePlaceChanged = () => {
-  //   if (autocomplete !== null) {
-  //     const place = autocomplete.getPlace();
-  //     setMeetupLocation(place.formatted_address || "");
-  //   } else {
-  //     console.log("Autocomplete is not loaded yet!");
-  //   }
-  // };
+  const handlePlaceChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+      setMeetupLocation(place.formatted_address || "");
+      setLatitude(place.geometry?.location?.lat() || null);
+      setLongitude(place.geometry?.location?.lng() || null);
+    } else {
+      console.log("Autocomplete is not loaded yet!");
+    }
+  };
 
-  // const onLoad = (autocompleteInstance: google.maps.places.Autocomplete) => {
-  //   setAutocomplete(autocompleteInstance);
-  // };
+  const onLoad = (autocompleteInstance: google.maps.places.Autocomplete) => {
+    setAutocomplete(autocompleteInstance);
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mx-auto py-6 sm:py-8 md:py-10">
@@ -409,7 +421,7 @@ export default function EditListingForm({ id }: EditListingFormProps) {
               {/* Meetup Location */}
               <div className="space-y-2">
                 <Label htmlFor="meetupLocation">Meetup Location</Label>
-                {/* <Autocomplete
+                <Autocomplete
                   onLoad={onLoad}
                   onPlaceChanged={handlePlaceChanged}
                 >
@@ -417,23 +429,38 @@ export default function EditListingForm({ id }: EditListingFormProps) {
                     id="meetupLocation"
                     value={meetupLocation}
                     onChange={(e) => setMeetupLocation(e.target.value)}
+                    placeholder="Enter a location"
                   />
-                </Autocomplete> */}
-                <Input
-                  id="meetupLocation"
-                  value={meetupLocation}
-                  onChange={(e) => setMeetupLocation(e.target.value)}
-                  placeholder="Enter meetup location"
-                />
+                </Autocomplete>
               </div>
             </div>
           </CardContent>
           <CardContent>
             <div className="flex space-x-2">
               <Button onClick={handleUpdateListing}>Update</Button>
-              <Button variant="destructive" onClick={handleDeleteListing}>
-                Delete
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive">Delete</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete this listing? This action
+                      cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogAction
+                      onClick={handleDeleteListing}
+                      className={buttonVariants({ variant: "destructive" })}
+                    >
+                      Delete
+                    </AlertDialogAction>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </CardContent>
         </Card>

@@ -1,4 +1,4 @@
-"use client"; // Mark this component as a client-side component
+"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -26,7 +26,7 @@ import { db, storage } from "@/app/firebase"; // Import your Firebase setup
 import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getAuth } from "firebase/auth";
-// import { useLoadScript, Autocomplete } from "@react-google-maps/api";
+import { Autocomplete, useLoadScript } from "@react-google-maps/api";
 
 const libraries: "places"[] = ["places"];
 
@@ -38,16 +38,19 @@ export default function CreateListingForm() {
   const [brand, setBrand] = useState("");
   const [description, setDescription] = useState("");
   const [meetupLocation, setMeetupLocation] = useState("");
+  const [latLng, setLatLng] = useState<{ lat: number; lng: number } | null>(
+    null
+  ); // State to store latitude and longitude
   const [autocomplete, setAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
   const router = useRouter();
   const auth = getAuth();
   const user = auth.currentUser; // Get the current user
 
-  // const { isLoaded } = useLoadScript({
-  //   googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-  //   libraries,
-  // });
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries,
+  });
 
   const conditions = [
     { label: "New", description: "Brand new, never used" },
@@ -80,7 +83,13 @@ export default function CreateListingForm() {
   };
 
   const handleCreateListing = async () => {
-    if (!user || !listingTitle || !selectedCondition || images.length === 0) {
+    if (
+      !user ||
+      !listingTitle ||
+      !selectedCondition ||
+      images.length === 0 ||
+      !latLng
+    ) {
       alert("Please fill all required fields");
       return;
     }
@@ -97,6 +106,9 @@ export default function CreateListingForm() {
         images: [], // Placeholder for images, we'll update this later
         datetime: new Date().toISOString(), // Include the actual creation time
         userId: user.uid, // Save the current user ID
+        latitude: latLng.lat,
+        longitude: latLng.lng,
+        available: true, // Mark listing as available
       });
 
       const uid = docRef.id; // Get the UID of the newly created document
@@ -120,8 +132,8 @@ export default function CreateListingForm() {
       await updateDoc(itemDocRef, {
         images: imageUrls, // Update the document with the URLs of the uploaded images
       });
-      toast.success("Successfully create listing.", {
-        description: "Your is lisiting is created",
+      toast.success("Successfully created listing.", {
+        description: "Your listing is created",
       });
       router.push("/"); // Redirect back to the homepage or product list
     } catch (error) {
@@ -129,17 +141,22 @@ export default function CreateListingForm() {
     }
   };
 
-  // if (!isLoaded) {
-  //   return <p>Loading...</p>;
-  // }
-  // const handlePlaceChanged = () => {
-  //   if (autocomplete !== null) {
-  //     const place = autocomplete.getPlace();
-  //     setMeetupLocation(place.formatted_address || "");
-  //   } else {
-  //     console.log("Autocomplete is not loaded yet!");
-  //   }
-  // };
+  if (!isLoaded) {
+    return <p>Loading...</p>;
+  }
+
+  const handlePlaceChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+      setMeetupLocation(place.formatted_address || "");
+      setLatLng({
+        lat: place.geometry?.location?.lat() || 0,
+        lng: place.geometry?.location?.lng() || 0,
+      });
+    } else {
+      console.log("Autocomplete is not loaded yet!");
+    }
+  };
 
   const onLoad = (autocompleteInstance: google.maps.places.Autocomplete) => {
     setAutocomplete(autocompleteInstance);
@@ -205,46 +222,41 @@ export default function CreateListingForm() {
       <div className="col-span-1 md:col-span-2">
         <Card>
           <CardHeader>
-            <CardTitle>Item Details</CardTitle>
+            <CardTitle>List your item</CardTitle>
+            <CardDescription>
+              Provide details about your item for others to see.
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="listing-title">Listing Title</Label>
+            <div className="space-y-4">
+              {/* Listing Title */}
+              <div className="grid grid-cols-1 gap-1.5">
+                <Label htmlFor="listingTitle">Title</Label>
                 <Input
-                  id="listing-title"
+                  id="listingTitle"
+                  placeholder="Enter item title"
                   value={listingTitle}
                   onChange={(e) => setListingTitle(e.target.value)}
-                  placeholder="Enter listing title"
                 />
               </div>
-              <div className="grid gap-2">
+
+              {/* Brand */}
+              <div className="grid grid-cols-1 gap-1.5">
                 <Label htmlFor="brand">Brand</Label>
                 <Input
                   id="brand"
+                  placeholder="Enter item brand"
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
-                  placeholder="Enter brand"
                 />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={4}
-                  placeholder="Enter description"
-                />
-              </div>
-              <div className="grid gap-2">
+
+              {/* Category */}
+              <div className="grid grid-cols-1 gap-1.5">
                 <Label htmlFor="category">Category</Label>
-                <Select
-                  value={selectedCategory}
-                  onValueChange={handleCategoryChange}
-                >
+                <Select onValueChange={handleCategoryChange}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Electronics">Electronics</SelectItem>
@@ -259,6 +271,8 @@ export default function CreateListingForm() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Condition */}
               <div className="grid gap-2">
                 <Label>Condition</Label>
                 <div className="flex gap-2">
@@ -284,37 +298,42 @@ export default function CreateListingForm() {
                     }
                   </div>
                 )}
-                <div className="grid gap-2">
-                  <Label htmlFor="meetup-location">Meetup Location</Label>
-                  {/* <Autocomplete
-                    onLoad={onLoad}
-                    onPlaceChanged={handlePlaceChanged}
-                  >
-                    <Input
-                      id="meetup-location"
-                      value={meetupLocation}
-                      onChange={(e) => setMeetupLocation(e.target.value)}
-                      placeholder="Enter meetup location"
-                    />
-                  </Autocomplete> */}
+              </div>
+
+              {/* Description */}
+              <div className="grid grid-cols-1 gap-1.5">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  placeholder="Enter item description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
+
+              {/* Meetup Location */}
+              <div className="grid grid-cols-1 gap-1.5">
+                <Label htmlFor="meetupLocation">Meetup Location</Label>
+                <Autocomplete
+                  onLoad={onLoad}
+                  onPlaceChanged={handlePlaceChanged}
+                >
                   <Input
-                    id="meetup-location"
+                    id="meetupLocation"
+                    placeholder="Enter meetup location"
                     value={meetupLocation}
                     onChange={(e) => setMeetupLocation(e.target.value)}
-                    placeholder="Enter meetup location"
                   />
-                </div>
+                </Autocomplete>
+              </div>
+
+              {/* Create Listing Button */}
+              <div className="grid grid-cols-1 gap-1.5">
+                <Button onClick={handleCreateListing}>Create Listing</Button>
               </div>
             </div>
           </CardContent>
         </Card>
-      </div>
-
-      {/* Button for Creating Listing */}
-      <div className="col-span-1 md:col-span-3 flex justify-end mt-4">
-        <Button onClick={handleCreateListing} className="w-auto">
-          Create Listing
-        </Button>
       </div>
     </div>
   );
