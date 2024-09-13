@@ -1,7 +1,6 @@
 "use client"; // Mark this component as a client-side component
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link"; // Import Link
 import { db } from "@/app/firebase";
 import { Card, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -16,6 +15,7 @@ import {
   doc,
 } from "firebase/firestore";
 import { CircleUser } from "lucide-react";
+import { ProgressBarLink } from "./progress-bar";
 
 interface Item {
   id: string;
@@ -88,7 +88,7 @@ export function Home() {
         {/* Product Grid */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {items.map((item) => (
-            <Link href={`/item/${item.id}`} key={item.id}>
+            <ProgressBarLink href={`/item/${item.id}`} key={item.id}>
               <Card className="w-full max-w-xs rounded-xl border width hover:shadow-lg transition-shadow">
                 <div className="grid gap-4 p-4">
                   <div className="aspect-[4/5] w-full overflow-hidden rounded-xl">
@@ -136,7 +136,7 @@ export function Home() {
                   </div>
                 </CardFooter>
               </Card>
-            </Link>
+            </ProgressBarLink>
           ))}
         </div>
       </div>

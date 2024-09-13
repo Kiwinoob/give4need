@@ -25,7 +25,6 @@ const ProgressBarContext = createContext<ReturnType<typeof useProgress> | null>(
 
 export function useProgressBar() {
   let progress = useContext(ProgressBarContext);
-
   if (progress === null) {
     throw new Error("Need to be inside provider");
   }

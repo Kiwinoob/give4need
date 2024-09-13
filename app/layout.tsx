@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Icons } from "@/components/icons";
 import { Toaster } from "@/components/ui/sonner";
+import { ProgressBar } from "@/components/progress-bar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {children}
+        <ProgressBar className="fixed top-0 z-[100] h-1 bg-primary">
+          {children}
+        </ProgressBar>
         <Toaster
           closeButton
           icons={{

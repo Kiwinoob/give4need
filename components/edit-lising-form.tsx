@@ -205,7 +205,7 @@ export default function EditListingForm({ id }: EditListingFormProps) {
       toast.success("Successfully updated listing.", {
         description: "Your listing has been updated",
       });
-      router.push("/"); // Redirect back to the homepage or product list
+      router.push("/listing"); // Redirect back to the homepage or product list
     } catch (error) {
       console.error("Error updating listing:", error);
     }

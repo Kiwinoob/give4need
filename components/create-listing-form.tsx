@@ -136,7 +136,7 @@ export default function CreateListingForm() {
       toast.success("Successfully created listing.", {
         description: "Your listing is created",
       });
-      router.push("/"); // Redirect back to the homepage or product list
+      router.push("/listing"); // Redirect back to the homepage or product list
     } catch (error) {
       console.error("Error creating listing:", error);
     }

@@ -12,11 +12,11 @@ import {
 import { db } from "@/app/firebase";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { CircleUser } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ProgressBarLink } from "./progress-bar";
 
 interface Item {
   id: string;
@@ -139,7 +139,7 @@ export default function MyListings() {
             ))
           ) : items.length > 0 ? (
             items.map((item) => (
-              <Link href={`/item/${item.id}`} key={item.id}>
+              <ProgressBarLink href={`/item/${item.id}`} key={item.id}>
                 <div className="bg-card text-card-foreground rounded-lg overflow-hidden shadow-lg group">
                   <div className="relative">
                     <Image
@@ -165,7 +165,7 @@ export default function MyListings() {
                     </p>
                   </div>
                 </div>
-              </Link>
+              </ProgressBarLink>
             ))
           ) : (
             <div className="col-span-full flex justify-center items-center h-40">

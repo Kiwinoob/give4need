@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-//import { ProgressBarLink } from "@/components/progress-bar";
+import { ProgressBarLink } from "@/components/progress-bar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CircleUser } from "lucide-react";
 import {
@@ -89,15 +89,15 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <Link href="/settings">
+          <ProgressBarLink href="/settings">
             <DropdownMenuItem>Profile</DropdownMenuItem>
-          </Link>
-          <Link href="/settings/account">
+          </ProgressBarLink>
+          <ProgressBarLink href="/settings/account">
             <DropdownMenuItem>Account Settings</DropdownMenuItem>
-          </Link>
-          <Link href="/settings/account">
+          </ProgressBarLink>
+          <ProgressBarLink href="/settings/account">
             <DropdownMenuItem>Settings</DropdownMenuItem>
-          </Link>
+          </ProgressBarLink>
           {/* <InstallPWA open={open} onOpenChange={setOpen}>
             <DropdownMenuItem
               onClick={(e) => {

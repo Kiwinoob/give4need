@@ -1,9 +1,10 @@
 "use client";
-import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { Home, LineChart, Menu, Package, HandHeart, Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { ProgressBarLink } from "@/components/progress-bar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { UserNav } from "@/components/user-nav";
 
@@ -43,14 +44,17 @@ export function Header() {
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col">
           <nav className="grid gap-2 text-lg font-medium">
-            <Link href="/" className="flex items-center gap-2 font-semibold">
+            <ProgressBarLink
+              href="/"
+              className="flex items-center gap-2 font-semibold"
+            >
               <Package className="h-6 w-6" />
               <span className="">Give4Need</span>
-            </Link>
+            </ProgressBarLink>
             {navLinks.map((link) => {
               const Icon = link.icon;
               return (
-                <Link
+                <ProgressBarLink
                   key={link.href}
                   href={link.href}
                   className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 ${
@@ -61,14 +65,16 @@ export function Header() {
                 >
                   <Icon className="h-5 w-5" />
                   {link.title}
-                </Link>
+                </ProgressBarLink>
               );
             })}
           </nav>
         </SheetContent>
       </Sheet>
-      <div className="w-full flex-1"></div>
-      <UserNav />
+
+      <div className="flex flex-grow basis-0 justify-end space-x-2 align-middle">
+        <UserNav />
+      </div>
     </header>
   );
 }
