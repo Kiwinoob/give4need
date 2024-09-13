@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { db, storage } from "@/app/firebase"; // Import your Firebase setup
+import { Timestamp } from "firebase/firestore";
 import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getAuth } from "firebase/auth";
@@ -104,7 +105,7 @@ export default function CreateListingForm() {
         description,
         meetupLocation, // Include meetup location in the document
         images: [], // Placeholder for images, we'll update this later
-        datetime: new Date().toISOString(), // Include the actual creation time
+        datetime: Timestamp.fromDate(new Date()), // Include the actual creation time
         userId: user.uid, // Save the current user ID
         latitude: latLng.lat,
         longitude: latLng.lng,

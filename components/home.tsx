@@ -5,7 +5,7 @@ import Link from "next/link"; // Import Link
 import { db } from "@/app/firebase";
 import { Card, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Timestamp } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -22,7 +22,7 @@ interface Item {
   title: string;
   condition: string;
   images: string[];
-  datetime: string;
+  datetime: Timestamp;
   userId: string;
 }
 
@@ -81,11 +81,6 @@ export function Home() {
 
   return (
     <div className="space-y-4 p-8 pt-4">
-      <div className="flex justify-end">
-        <Button size="sm" onClick={() => router.push("/create-listing")}>
-          Create Listing
-        </Button>
-      </div>
       <div className="flex w-full items-center space-y-2">
         <h2 className="text-2xl font-bold">New Items</h2>
       </div>
@@ -129,9 +124,14 @@ export function Home() {
                       {userProfiles[item.userId]?.displayName || "Unknown User"}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(new Date(item.datetime), {
-                        addSuffix: true,
-                      })}
+                      {item.datetime
+                        ? formatDistanceToNow(
+                            item.datetime instanceof Timestamp
+                              ? item.datetime.toDate() // Convert Firestore Timestamp to JS Date
+                              : new Date(item.datetime), // Handle non-Timestamp formats if any
+                            { addSuffix: true }
+                          )
+                        : "Unknown"}
                     </p>
                   </div>
                 </CardFooter>

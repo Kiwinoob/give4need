@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, LineChart, Package, HandHeart, Mail } from "lucide-react";
+import { Home, Package, HandHeart, Mail } from "lucide-react";
 
 const navLinks = [
   {
@@ -16,7 +16,7 @@ const navLinks = [
   },
   {
     title: "Listing",
-    href: "#",
+    href: "/listing",
     icon: Package,
   },
   {

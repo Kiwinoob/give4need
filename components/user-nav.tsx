@@ -1,11 +1,14 @@
 "use client"; // Mark this component as a client-side component
-import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+//import { ProgressBarLink } from "@/components/progress-bar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CircleUser } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -42,7 +45,7 @@ export function UserNav() {
       }
     });
 
-    return () => unsubscribe(); // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, []);
 
   const handleLogout = async () => {
@@ -85,8 +88,29 @@ export function UserNav() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Settings</DropdownMenuItem>
-        <DropdownMenuItem>Support</DropdownMenuItem>
+        <DropdownMenuGroup>
+          <Link href="/settings">
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+          </Link>
+          <Link href="/settings/account">
+            <DropdownMenuItem>Account Settings</DropdownMenuItem>
+          </Link>
+          <Link href="/settings/account">
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+          </Link>
+          {/* <InstallPWA open={open} onOpenChange={setOpen}>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                setOpen((prev) => !prev);
+              }}
+            >
+              Install Web App
+              <DropdownMenuShortcut>⌘T</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </InstallPWA> */}
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout} className="text-destructive">
           Log out

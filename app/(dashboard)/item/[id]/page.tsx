@@ -26,8 +26,9 @@ export default async function ItemPage({ params }: { params: { id: string } }) {
     condition: itemData.condition,
     meetupLocation: itemData.meetupLocation,
     images: itemData.images,
-    datetime: itemData.datetime,
+    datetime: itemData.datetime.toDate().toISOString(),
     userId: itemData.userId,
+    available: itemData.available,
   };
 
   return (

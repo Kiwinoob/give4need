@@ -20,7 +20,7 @@ export const navLinks = [
   },
   {
     title: "Listing",
-    href: "#",
+    href: "/listing",
     icon: Package,
   },
   {

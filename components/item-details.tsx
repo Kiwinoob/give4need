@@ -240,10 +240,10 @@ export default function ItemDetails({ item }: { item: Item }) {
             {/* Add a button to mark the item as completed */}
             <Button
               size="lg"
-              variant={available ? "secondary" : "default"}
+              variant={available ? "default" : "secondary"}
               onClick={toggleAvailability}
             >
-              {available ? "Mark as Uncompleted" : "Mark as Completed"}
+              {available ? "Mark as Completed" : "Mark as Uncompleted"}
             </Button>
           </div>
         )}
