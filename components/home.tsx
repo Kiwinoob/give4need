@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { db } from "@/app/firebase";
-import { Card, CardFooter } from "@/components/ui/card";
+import { auth } from "@/app/firebase"; // Import Firebase Auth to get current user
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Timestamp } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -14,7 +14,15 @@ import {
   getDoc,
   doc,
 } from "firebase/firestore";
-import { CircleUser } from "lucide-react";
+import {
+  CircleUser,
+  Laptop,
+  Headphones,
+  Book,
+  Shirt,
+  HomeIcon,
+  ToyBrickIcon,
+} from "lucide-react";
 import { ProgressBarLink } from "./progress-bar";
 
 interface Item {
@@ -22,6 +30,7 @@ interface Item {
   title: string;
   condition: string;
   images: string[];
+  category: string;
   datetime: Timestamp;
   userId: string;
 }
@@ -36,7 +45,18 @@ export function Home() {
   const [userProfiles, setUserProfiles] = useState<Record<string, UserProfile>>(
     {}
   );
-  const router = useRouter();
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null); // Track current user ID
+
+  useEffect(() => {
+    // Fetch the current user ID
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setCurrentUserId(user.uid); // Store current user ID
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup the subscription on unmount
+  }, []);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -47,12 +67,15 @@ export function Home() {
 
         querySnapshot.forEach((doc: DocumentData) => {
           const item = doc.data() as Item;
-          itemList.push({ ...item, id: doc.id });
-          userIdSet.add(item.userId);
+
+          // Exclude items created by the current user
+          if (item.userId !== currentUserId) {
+            itemList.push({ ...item, id: doc.id });
+            userIdSet.add(item.userId); // Collect user IDs for profile fetching
+          }
         });
 
         setItems(itemList);
-
         // Fetch user profiles
         const userProfiles: Record<string, UserProfile> = {};
         await Promise.all(
@@ -76,68 +99,146 @@ export function Home() {
       }
     };
 
-    fetchItems();
-  }, []);
+    if (currentUserId) {
+      fetchItems();
+    }
+  }, [currentUserId]);
 
   return (
-    <div className="space-y-4 p-8 pt-4">
-      <div className="flex w-full items-center space-y-2">
-        <h2 className="text-2xl font-bold">New Items</h2>
+    <div>
+      <div className="py-6 md:py-12 lg:py-16">
+        <div className="container grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          <ProgressBarLink
+            href="/electronics"
+            className="group flex flex-col items-center gap-2 hover:text-primary"
+            prefetch={false}
+          >
+            <div className="bg-muted p-4 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+              <Laptop className="h-8 w-8" />
+            </div>
+            <span className="text-sm font-medium">Electronics</span>
+          </ProgressBarLink>
+          <ProgressBarLink
+            href="/accessories"
+            className="group flex flex-col items-center gap-2 hover:text-primary"
+            prefetch={false}
+          >
+            <div className="bg-muted p-4 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+              <Headphones className="h-8 w-8" />
+            </div>
+            <span className="text-sm font-medium">Accessories</span>
+          </ProgressBarLink>
+          <ProgressBarLink
+            href="/books"
+            className="group flex flex-col items-center gap-2 hover:text-primary"
+            prefetch={false}
+          >
+            <div className="bg-muted p-4 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+              <Book className="h-8 w-8" />
+            </div>
+            <span className="text-sm font-medium">Books</span>
+          </ProgressBarLink>
+          <ProgressBarLink
+            href="/clothing"
+            className="group flex flex-col items-center gap-2 hover:text-primary"
+            prefetch={false}
+          >
+            <div className="bg-muted p-4 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+              <Shirt className="h-8 w-8" />
+            </div>
+            <span className="text-sm font-medium">Clothing</span>
+          </ProgressBarLink>
+          <ProgressBarLink
+            href="/household"
+            className="group flex flex-col items-center gap-2 hover:text-primary"
+            prefetch={false}
+          >
+            <div className="bg-muted p-4 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+              <HomeIcon className="h-8 w-8" />
+            </div>
+            <span className="text-sm font-medium">Household</span>
+          </ProgressBarLink>
+          <ProgressBarLink
+            href="/toys"
+            className="group flex flex-col items-center gap-2 hover:text-primary"
+            prefetch={false}
+          >
+            <div className="bg-muted p-4 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+              <ToyBrickIcon className="h-8 w-8" />
+            </div>
+            <span className="text-sm font-medium">Toys</span>
+          </ProgressBarLink>
+        </div>
       </div>
-      <div className="flex items-center">
-        {/* Product Grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {items.map((item) => (
-            <ProgressBarLink href={`/item/${item.id}`} key={item.id}>
-              <Card className="w-full max-w-xs rounded-xl border width hover:shadow-lg transition-shadow">
-                <div className="grid gap-4 p-4">
-                  <div className="aspect-[4/5] w-full overflow-hidden rounded-xl">
-                    <Image
-                      src={item.images[0]}
-                      alt="Product image"
-                      width="250"
-                      height="250"
-                      className="aspect-[4/5] object-cover border w-full"
-                    />
-                  </div>
-                  <div className="grid gap-1.5">
-                    <h3 className="font-semibold text-sm md:text-base">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {item.condition}
-                    </p>
-                  </div>
-                </div>
-                <CardFooter className="flex items-start space-x-4 justify-start">
-                  <Avatar>
-                    <AvatarImage
-                      src={userProfiles[item.userId]?.photoUrl}
-                      alt="User avatar"
-                    />
-                    <AvatarFallback>
-                      <CircleUser className="h-5 w-5" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-sm font-medium">
-                      {userProfiles[item.userId]?.displayName || "Unknown User"}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {item.datetime
-                        ? formatDistanceToNow(
-                            item.datetime instanceof Timestamp
-                              ? item.datetime.toDate() // Convert Firestore Timestamp to JS Date
-                              : new Date(item.datetime), // Handle non-Timestamp formats if any
-                            { addSuffix: true }
-                          )
-                        : "Unknown"}
-                    </p>
-                  </div>
-                </CardFooter>
-              </Card>
+      <div className="py-6 md:py-12 lg:py-16">
+        <div className="container">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">Latest Items</h2>
+            <ProgressBarLink
+              href="#"
+              className="text-primary hover:underline"
+              prefetch={false}
+            >
+              View All
             </ProgressBarLink>
-          ))}
+          </div>
+          <div className="flex items-center">
+            {/* Product Grid */}
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
+              {items.map((item) => (
+                <ProgressBarLink
+                  href={`/${item.category}/${item.id}`}
+                  key={item.id}
+                >
+                  <div className="bg-background rounded-lg shadow-lg overflow-hidden">
+                    <div className="relative">
+                      <Image
+                        src={item.images[0]}
+                        alt="Product image"
+                        width="250"
+                        height="250"
+                        className="aspect-[4/5] object-cover border w-full"
+                      />
+                    </div>
+                    <div className="p-4 space-y-2">
+                      <h3 className="text-lg font-bold"> {item.title}</h3>
+                      <p className="text-muted-foreground line-clamp-2">
+                        {item.condition}
+                      </p>
+
+                      <div className="flex items-start space-x-4 justify-start">
+                        <Avatar>
+                          <AvatarImage
+                            src={userProfiles[item.userId]?.photoUrl}
+                            alt="User avatar"
+                          />
+                          <AvatarFallback>
+                            <CircleUser className="h-5 w-5" />
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="text-sm font-medium">
+                            {userProfiles[item.userId]?.displayName ||
+                              "Unknown User"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {item.datetime
+                              ? formatDistanceToNow(
+                                  item.datetime instanceof Timestamp
+                                    ? item.datetime.toDate() // Convert Firestore Timestamp to JS Date
+                                    : new Date(item.datetime), // Handle non-Timestamp formats if any
+                                  { addSuffix: true }
+                                )
+                              : "unknown"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ProgressBarLink>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

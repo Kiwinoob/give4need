@@ -149,7 +149,12 @@ export default function Recommendation() {
       </div>
 
       <div className="w-80 bg-background p-6 overflow-auto">
-        <h2 className="text-2xl font-bold mb-4">Nearby Items</h2>
+        <div>
+          <h2 className="text-2xl font-bold ">Nearby Items</h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            Nearby item distance from 0km to 5km
+          </p>
+        </div>
         <div className="grid gap-4">
           {items.length > 0 ? (
             items.map((item) => (
