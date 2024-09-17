@@ -53,7 +53,7 @@ export default async function CategoryPage({
             {params.category}
           </h1>
           <p className="mt-4 text-muted-foreground">
-            Currently the category you're looking does not have any items.
+            Currently the category you&apos;re looking does not have any items.
             Please check out other categories.
           </p>
           <div className="mt-6">
