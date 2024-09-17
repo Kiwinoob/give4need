@@ -26,8 +26,8 @@ export default async function ItemPage({
             Product Not Found
           </h1>
           <p className="mt-4 text-muted-foreground">
-            The product you're looking for could not be found. Please check the
-            URL or try searching again.
+            The product you&apos;re looking for could not be found. Please check
+            the URL or try searching again.
           </p>
           <div className="mt-6">
             <ProgressBarLink

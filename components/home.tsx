@@ -33,6 +33,7 @@ interface Item {
   category: string;
   datetime: Timestamp;
   userId: string;
+  available: boolean;
 }
 
 interface UserProfile {
@@ -69,7 +70,7 @@ export function Home() {
           const item = doc.data() as Item;
 
           // Exclude items created by the current user
-          if (item.userId !== currentUserId) {
+          if (item.userId !== currentUserId && item.available !== false) {
             itemList.push({ ...item, id: doc.id });
             userIdSet.add(item.userId); // Collect user IDs for profile fetching
           }
