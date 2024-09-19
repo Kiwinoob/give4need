@@ -97,7 +97,7 @@ export default function MyListings() {
                 />
               ) : (
                 <AvatarFallback>
-                  <Icons.circleUser className="h-5 w-5" />
+                  <Icons.circleUser className="h-16 w-16" />
                 </AvatarFallback>
               )}
             </Avatar>

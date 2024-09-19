@@ -51,6 +51,6 @@ export const config = {
     "/listing",
     "/inbox",
     "/settings/:path*",
-    "/:category/:id*",
+    "/:category/:id",
   ],
 };
