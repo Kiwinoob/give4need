@@ -47,5 +47,10 @@ export const config = {
     "/reset-password",
     "/change-password",
     "/create-listing",
+    "/edit-listing",
+    "/listing",
+    "/inbox",
+    "/settings/:path*",
+    "/:category/:id*",
   ],
 };
