@@ -2,32 +2,32 @@
 
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import { Home, LineChart, Menu, Package, HandHeart, Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ProgressBarLink } from "@/components/progress-bar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { UserNav } from "@/components/user-nav";
+import { Icons } from "@/components/icons";
 
 export const navLinks = [
   {
     title: "Home",
     href: "/",
-    icon: Home,
+    icon: Icons.home,
   },
   {
     title: "Recommendations",
     href: "/recommendations",
-    icon: HandHeart,
+    icon: Icons.heartHandshake,
   },
   {
     title: "Listing",
     href: "/listing",
-    icon: Package,
+    icon: Icons.listing,
   },
   {
     title: "Inbox",
     href: "/inbox",
-    icon: Mail,
+    icon: Icons.mail,
   },
 ];
 
@@ -38,7 +38,7 @@ export function Header() {
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="shrink-0 md:hidden">
-            <Menu className="h-5 w-5" />
+            <Icons.menu className="h-5 w-5" />
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
@@ -48,7 +48,7 @@ export function Header() {
               href="/"
               className="flex items-center gap-2 font-semibold"
             >
-              <Package className="h-6 w-6" />
+              <Icons.listing className="h-6 w-6" />
               <span className="">Give4Need</span>
             </ProgressBarLink>
             {navLinks.map((link) => {

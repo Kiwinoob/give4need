@@ -12,6 +12,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Icons } from "@/components/icons";
 import { XIcon, ImageIcon } from "lucide-react";
 import {
   Select,
@@ -171,7 +172,8 @@ export default function CreateListingForm() {
           <CardHeader>
             <CardTitle>Upload Images</CardTitle>
             <CardDescription>
-              Drag and drop or click to upload up to 3 images.
+              Drag and drop or click to upload up to 3 images, First image is
+              going be the cover photo
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -179,7 +181,7 @@ export default function CreateListingForm() {
               {/* Clickable Drag-and-Drop Area */}
               <label className="group relative flex h-40 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-muted transition-colors hover:border-primary">
                 <div className="z-10 flex flex-col items-center justify-center space-y-2 text-muted-foreground group-hover:text-primary">
-                  <ImageIcon className="w-8 h-8 text-muted-foreground" />
+                  <Icons.imageUpload className="w-8 h-8 text-muted-foreground" />
                   <p className="text-sm font-medium">
                     Drag and drop or click to upload
                   </p>
@@ -209,7 +211,7 @@ export default function CreateListingForm() {
                       className="absolute top-2 right-2 rounded-full bg-background p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                       onClick={() => handleRemoveImage(index)}
                     >
-                      <XIcon className="w-4 h-4 text-muted-foreground" />
+                      <Icons.xIcon className="w-4 h-4 text-muted-foreground" />
                     </button>
                   </div>
                 ))}

@@ -1,12 +1,16 @@
 import { CategoryList } from "@/components/category-list";
 import { db } from "@/app/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { ProgressBarLink } from "@/components/progress-bar";
 
 // Fetch items in a specific category
 async function getCategoryItems(category: string) {
   const itemsRef = collection(db, "items");
-  const q = query(itemsRef, where("category", "==", category));
+  const q = query(
+    itemsRef,
+    where("category", "==", category),
+    orderBy("datetime", "desc")
+  );
   const querySnapshot = await getDocs(q);
 
   const items: any[] = [];

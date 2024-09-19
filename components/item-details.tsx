@@ -15,7 +15,7 @@ import {
   CarouselNext,
 } from "@/components/ui/carousel";
 import { toast } from "sonner";
-import { MapPin, Check, CircleUser } from "lucide-react";
+import { Icons } from "@/components/icons";
 import Talk from "talkjs";
 import { getAuth } from "firebase/auth";
 
@@ -191,11 +191,11 @@ export default function ItemDetails({ item }: { item: Item }) {
           <p className="text-base">{item.description}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Check className="w-5 h-5 text-primary" />
+          <Icons.check className="w-5 h-5 text-primary" />
           <span className="text-base">{item.condition}</span>
         </div>
         <div className="flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-primary" />
+          <Icons.mapPin className="w-5 h-5 text-primary" />
           <span className="text-base">
             <a
               href={googleMapsUrl}
@@ -213,7 +213,7 @@ export default function ItemDetails({ item }: { item: Item }) {
           <Avatar>
             <AvatarImage src={userProfile?.photoUrl} alt="Seller Profile" />
             <AvatarFallback>
-              <CircleUser className="h-5 w-5" />
+              <Icons.circleUser className="h-5 w-5" />
             </AvatarFallback>
           </Avatar>
           <div>

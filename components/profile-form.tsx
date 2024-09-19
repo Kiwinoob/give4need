@@ -21,7 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CircleUser, CameraIcon } from "lucide-react";
+import { Icons } from "@/components/icons";
 
 export function ProfileForm() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -188,13 +188,13 @@ export function ProfileForm() {
                                 className="object-cover"
                               />
                               <AvatarFallback>
-                                <CircleUser className="h-5 w-5" />
+                                <Icons.circleUser className="h-5 w-5" />
                               </AvatarFallback>
                             </Avatar>
                           ) : (
                             <div className="h-32 w-32 rounded-full bg-gray-200">
                               <div className="absolute flex h-32 w-32 flex-col items-center justify-center rounded-full text-white opacity-0 duration-300 hover:opacity-70">
-                                <CameraIcon size={30} />
+                                <Icons.camera size={30} />
                                 <div className="text-sm">Update photo</div>
                               </div>
                             </div>

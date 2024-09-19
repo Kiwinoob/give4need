@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { CircleUser } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProgressBarLink } from "./progress-bar";
 
@@ -97,7 +97,7 @@ export default function MyListings() {
                 />
               ) : (
                 <AvatarFallback>
-                  <CircleUser className="h-5 w-5" />
+                  <Icons.circleUser className="h-5 w-5" />
                 </AvatarFallback>
               )}
             </Avatar>

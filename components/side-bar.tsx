@@ -1,29 +1,29 @@
 "use client";
-import Link from "next/link";
+
 import { usePathname } from "next/navigation";
 import { ProgressBarLink } from "@/components/progress-bar";
-import { Home, Package, HandHeart, Mail } from "lucide-react";
+import { Icons, type TablerIcon } from "@/components/icons";
 
 const navLinks = [
   {
     title: "Home",
     href: "/",
-    icon: Home,
+    icon: Icons.home,
   },
   {
     title: "Recommendations",
     href: "/recommendations",
-    icon: HandHeart,
+    icon: Icons.heartHandshake,
   },
   {
     title: "Listing",
     href: "/listing",
-    icon: Package,
+    icon: Icons.listing,
   },
   {
     title: "Inbox",
     href: "/inbox",
-    icon: Mail,
+    icon: Icons.mail,
   },
 ];
 
@@ -39,7 +39,7 @@ export function SideBar() {
               href="/"
               className="flex items-center gap-2 font-semibold"
             >
-              <Package className="h-6 w-6" />
+              <Icons.listing className="h-6 w-6" />
               <span className="">Give4Need</span>
             </ProgressBarLink>
           </div>

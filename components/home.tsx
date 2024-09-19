@@ -1,5 +1,4 @@
 "use client"; // Mark this component as a client-side component
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { db } from "@/app/firebase";
 import { auth } from "@/app/firebase"; // Import Firebase Auth to get current user
@@ -13,16 +12,11 @@ import {
   DocumentData,
   getDoc,
   doc,
+  orderBy,
+  query,
+  limit,
 } from "firebase/firestore";
-import {
-  CircleUser,
-  Laptop,
-  Headphones,
-  Book,
-  Shirt,
-  HomeIcon,
-  ToyBrickIcon,
-} from "lucide-react";
+import { Icons } from "@/components/icons";
 import { ProgressBarLink } from "./progress-bar";
 
 interface Item {
@@ -62,7 +56,9 @@ export function Home() {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "items"));
+        const querySnapshot = await getDocs(
+          query(collection(db, "items"), orderBy("datetime", "desc"), limit(4))
+        );
         const itemList: Item[] = [];
         const userIdSet = new Set<string>();
 
@@ -115,7 +111,7 @@ export function Home() {
             prefetch={false}
           >
             <div className="bg-muted p-4 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-              <Laptop className="h-8 w-8" />
+              <Icons.laptop className="h-8 w-8" />
             </div>
             <span className="text-sm font-medium">Electronics</span>
           </ProgressBarLink>
@@ -125,7 +121,7 @@ export function Home() {
             prefetch={false}
           >
             <div className="bg-muted p-4 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-              <Headphones className="h-8 w-8" />
+              <Icons.accessories className="h-8 w-8" />
             </div>
             <span className="text-sm font-medium">Accessories</span>
           </ProgressBarLink>
@@ -135,7 +131,7 @@ export function Home() {
             prefetch={false}
           >
             <div className="bg-muted p-4 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-              <Book className="h-8 w-8" />
+              <Icons.books className="h-8 w-8" />
             </div>
             <span className="text-sm font-medium">Books</span>
           </ProgressBarLink>
@@ -145,7 +141,7 @@ export function Home() {
             prefetch={false}
           >
             <div className="bg-muted p-4 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-              <Shirt className="h-8 w-8" />
+              <Icons.clothing className="h-8 w-8" />
             </div>
             <span className="text-sm font-medium">Clothing</span>
           </ProgressBarLink>
@@ -155,7 +151,7 @@ export function Home() {
             prefetch={false}
           >
             <div className="bg-muted p-4 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-              <HomeIcon className="h-8 w-8" />
+              <Icons.household className="h-8 w-8" />
             </div>
             <span className="text-sm font-medium">Household</span>
           </ProgressBarLink>
@@ -165,7 +161,7 @@ export function Home() {
             prefetch={false}
           >
             <div className="bg-muted p-4 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-              <ToyBrickIcon className="h-8 w-8" />
+              <Icons.toys className="h-8 w-8" />
             </div>
             <span className="text-sm font-medium">Toys</span>
           </ProgressBarLink>
@@ -176,7 +172,7 @@ export function Home() {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold">Latest Items</h2>
             <ProgressBarLink
-              href="#"
+              href="/latest-items"
               className="text-primary hover:underline"
               prefetch={false}
             >
@@ -214,7 +210,7 @@ export function Home() {
                             alt="User avatar"
                           />
                           <AvatarFallback>
-                            <CircleUser className="h-5 w-5" />
+                            <Icons.circleUser className="h-5 w-5" />
                           </AvatarFallback>
                         </Avatar>
                         <div>

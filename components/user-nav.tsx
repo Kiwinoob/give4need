@@ -1,10 +1,10 @@
 "use client"; // Mark this component as a client-side component
 
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { InstallPWA } from "@/components/install-pwa";
 import { ProgressBarLink } from "@/components/progress-bar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CircleUser } from "lucide-react";
+import { Icons } from "@/components/icons";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +19,7 @@ import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 
 export function UserNav() {
+  const [open, setOpen] = useState(false);
   const [profile, setProfile] = useState<{
     avatarUrl?: string;
     name?: string;
@@ -71,7 +72,7 @@ export function UserNav() {
               className="object-cover"
             />
             <AvatarFallback>
-              <CircleUser className="h-5 w-5" />
+              <Icons.circleUser className="h-5 w-5" />
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -98,7 +99,7 @@ export function UserNav() {
           <ProgressBarLink href="/settings/account">
             <DropdownMenuItem>Settings</DropdownMenuItem>
           </ProgressBarLink>
-          {/* <InstallPWA open={open} onOpenChange={setOpen}>
+          <InstallPWA open={open} onOpenChange={setOpen}>
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
@@ -107,9 +108,8 @@ export function UserNav() {
               }}
             >
               Install Web App
-              <DropdownMenuShortcut>⌘T</DropdownMenuShortcut>
             </DropdownMenuItem>
-          </InstallPWA> */}
+          </InstallPWA>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout} className="text-destructive">

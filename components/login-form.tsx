@@ -7,7 +7,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/app/firebase";
 import { toast } from "sonner";
 import { Icons } from "@/components/icons";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -110,14 +110,14 @@ export default function LoginForm() {
             required
           />
         </div>
-        <button
+        <Button
           type="submit"
           className={cn(buttonVariants())}
           disabled={isLoading}
         >
           {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
           Sign In with Email
-        </button>
+        </Button>
       </div>
     </form>
   );

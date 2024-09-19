@@ -1,10 +1,12 @@
 "use client";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Timestamp } from "firebase/firestore";
 import { formatDistanceToNow } from "date-fns";
 import { ProgressBarLink } from "./progress-bar";
-import { CircleUser } from "lucide-react";
+import { Icons } from "@/components/icons";
+import { Input } from "./ui/input";
 
 interface CategoryListProps {
   categoryName: string;
@@ -33,11 +35,38 @@ export function CategoryList({
   items,
   userProfiles,
 }: CategoryListProps) {
+  const [searchQuery, setSearchQuery] = useState<string>(""); // Search query state
+  const [filteredItems, setFilteredItems] = useState<CategoryItem[]>(items); // Filtered items
+
+  // Update filtered items whenever search query or items change
+  useEffect(() => {
+    if (searchQuery) {
+      const lowercasedQuery = searchQuery.toLowerCase();
+      const filtered = items.filter(
+        (item) =>
+          item.title.toLowerCase().includes(lowercasedQuery) ||
+          item.description?.toLowerCase().includes(lowercasedQuery) ||
+          ""
+      );
+      setFilteredItems(filtered);
+    } else {
+      setFilteredItems(items);
+    }
+  }, [searchQuery, items]);
+
   return (
     <div className="space-y-4">
+      <Input
+        type="text"
+        placeholder="Search items..."
+        className="w-full p-2 border border-gray-300 rounded"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
       <h2 className="text-2xl font-bold capitalize">{categoryName}</h2>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-        {items.map((item) => {
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
+        {filteredItems.map((item) => {
           const userProfile = userProfiles[item.userId] || {
             displayName: "Unknown User",
             photoUrl: "",
@@ -69,7 +98,7 @@ export function CategoryList({
                         alt="User avatar"
                       />
                       <AvatarFallback>
-                        <CircleUser className="h-5 w-5" />
+                        <Icons.circleUser className="h-5 w-5" />
                       </AvatarFallback>
                     </Avatar>
                     <div>

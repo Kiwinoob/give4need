@@ -1,10 +1,10 @@
 "use client"; // Mark this component as a client-side component
 import { useEffect, useRef, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import Link from "next/link";
 import { db } from "@/app/firebase";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
+import { ProgressBarLink } from "./progress-bar";
 
 export default function Recommendation() {
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -152,13 +152,13 @@ export default function Recommendation() {
         <div>
           <h2 className="text-2xl font-bold ">Nearby Items</h2>
           <p className="text-sm text-muted-foreground mb-4">
-            Nearby item distance from 0km to 5km
+            Nearby items are distance from 0km to 5km
           </p>
         </div>
         <div className="grid gap-4">
           {items.length > 0 ? (
             items.map((item) => (
-              <Link href={`/item/${item.id}`} key={item.id}>
+              <ProgressBarLink href={`/item/${item.id}`} key={item.id}>
                 <Card className="cursor-pointer">
                   <CardContent className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
                     <Image
@@ -180,10 +180,12 @@ export default function Recommendation() {
                     </div>
                   </CardContent>
                 </Card>
-              </Link>
+              </ProgressBarLink>
             ))
           ) : (
-            <p>No items found nearby.</p>
+            <div className="col-span-full flex justify-center items-center h-40">
+              <p className="text-center">No items found nearby.</p>
+            </div>
           )}
         </div>
       </div>
