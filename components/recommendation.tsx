@@ -18,7 +18,6 @@ export default function Recommendation() {
     lat2: number,
     lon2: number
   ) {
-    // Check if all inputs are valid numbers
     if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
       console.error("Invalid coordinates provided to calculateDistance:", {
         lat1,
@@ -53,11 +52,6 @@ export default function Recommendation() {
       querySnapshot.forEach((doc) => {
         const itemData = doc.data();
         const { latitude, longitude } = itemData;
-        console.log(
-          `Item Coordinates: Latitude: ${latitude}, Longitude: ${longitude}`
-        );
-
-        console.log(itemData);
 
         const distance = calculateDistance(
           userLocation.lat,
@@ -65,7 +59,6 @@ export default function Recommendation() {
           latitude,
           longitude
         );
-        console.log(`Distance to ${itemData.title}: ${distance} km`); // Debugging line
 
         if (distance >= 0 && distance <= 5) {
           fetchedItems.push({ id: doc.id, ...itemData, distance });
@@ -77,57 +70,40 @@ export default function Recommendation() {
     }
   };
 
-  const initializeMap = () => {
-    if (mapRef.current) {
-      // Check geolocation permission status
-      navigator.permissions
-        .query({ name: "geolocation" })
-        .then((permissionStatus) => {
-          if (permissionStatus.state === "granted") {
-            // Permission is already granted
-            getUserLocation();
-          } else if (permissionStatus.state === "prompt") {
-            // Prompt the user for permission
-            getUserLocation();
-          } else if (permissionStatus.state === "denied") {
-            // Handle denied case
-            toast.error(
-              "Geolocation permission denied. Please enable it to use this feature"
-            );
-          }
-
-          // Listen for changes in the permission state
-          permissionStatus.onchange = () => {
-            if (permissionStatus.state === "granted") {
-              getUserLocation();
-            }
-          };
-        })
-        .catch((error) => {
-          console.error("Error checking geolocation permission:", error);
-        });
-    }
-  };
-
   const getUserLocation = () => {
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        const newMap = new google.maps.Map(mapRef.current as HTMLElement, {
-          center: { lat: latitude, lng: longitude },
-          zoom: 14,
-        });
-        setMap(newMap);
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          const newMap = new google.maps.Map(mapRef.current as HTMLElement, {
+            center: { lat: latitude, lng: longitude },
+            zoom: 14,
+          });
+          setMap(newMap);
 
-        await fetchItemsFromFirebase({ lat: latitude, lng: longitude });
-      },
-      (error) => {
-        console.error("Error getting user location:", error);
-        toast.error(
-          "Unable to retrieve your location. Please enable location services."
-        );
-      }
-    );
+          await fetchItemsFromFirebase({ lat: latitude, lng: longitude });
+        },
+        (error) => {
+          let errorMessage = "Unable to retrieve your location.";
+          if (error.code === error.PERMISSION_DENIED) {
+            errorMessage = "Location permission was denied.";
+          } else if (error.code === error.POSITION_UNAVAILABLE) {
+            errorMessage = "Location information is unavailable.";
+          } else if (error.code === error.TIMEOUT) {
+            errorMessage = "The request to get your location timed out.";
+          }
+          console.error("Error getting user location:", error);
+          toast.error(errorMessage);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    } else {
+      toast.error("Geolocation is not supported by your browser.");
+    }
   };
 
   const loadGoogleMapsScript = () => {
@@ -136,10 +112,10 @@ export default function Recommendation() {
       script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`;
       script.async = true;
       script.defer = true;
-      script.onload = initializeMap;
+      script.onload = getUserLocation; // Initialize map after script is loaded
       document.head.appendChild(script);
     } else {
-      initializeMap();
+      getUserLocation();
     }
   };
 
@@ -188,7 +164,7 @@ export default function Recommendation() {
         <div>
           <h2 className="text-2xl font-bold ">Nearby Items</h2>
           <p className="text-sm text-muted-foreground mb-4">
-            Nearby items are distance from 0km to 5km
+            Nearby items are distance from you 0km to 5km
           </p>
         </div>
         <div className="grid gap-4">

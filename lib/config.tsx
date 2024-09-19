@@ -29,13 +29,6 @@ export const apiHost = isDev
   ? host
   : `https://${process.env.VERCEL_URL || domain}`;
 
-export const apiBaseUrl = `/api`;
-
-export const api = {
-  rosters: `${apiBaseUrl}/rosters`,
-  profiles: `${apiBaseUrl}/profiles`,
-};
-
 // ----------------------------------------------------------------------------
 
 export const site = {
