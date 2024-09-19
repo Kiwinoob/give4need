@@ -5,6 +5,7 @@ import { db } from "@/app/firebase";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { ProgressBarLink } from "./progress-bar";
+import { toast } from "sonner";
 
 export default function Recommendation() {
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -78,20 +79,55 @@ export default function Recommendation() {
 
   const initializeMap = () => {
     if (mapRef.current) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const { latitude, longitude } = position.coords;
-          const newMap = new google.maps.Map(mapRef.current as HTMLElement, {
-            center: { lat: latitude, lng: longitude },
-            zoom: 14,
-          });
-          setMap(newMap);
+      // Check geolocation permission status
+      navigator.permissions
+        .query({ name: "geolocation" })
+        .then((permissionStatus) => {
+          if (permissionStatus.state === "granted") {
+            // Permission is already granted
+            getUserLocation();
+          } else if (permissionStatus.state === "prompt") {
+            // Prompt the user for permission
+            getUserLocation();
+          } else if (permissionStatus.state === "denied") {
+            // Handle denied case
+            toast.error(
+              "Geolocation permission denied. Please enable it to use this feature"
+            );
+          }
 
-          await fetchItemsFromFirebase({ lat: latitude, lng: longitude });
-        },
-        (error) => console.error("Error getting user location:", error)
-      );
+          // Listen for changes in the permission state
+          permissionStatus.onchange = () => {
+            if (permissionStatus.state === "granted") {
+              getUserLocation();
+            }
+          };
+        })
+        .catch((error) => {
+          console.error("Error checking geolocation permission:", error);
+        });
     }
+  };
+
+  const getUserLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        const newMap = new google.maps.Map(mapRef.current as HTMLElement, {
+          center: { lat: latitude, lng: longitude },
+          zoom: 14,
+        });
+        setMap(newMap);
+
+        await fetchItemsFromFirebase({ lat: latitude, lng: longitude });
+      },
+      (error) => {
+        console.error("Error getting user location:", error);
+        toast.error(
+          "Unable to retrieve your location. Please enable location services."
+        );
+      }
+    );
   };
 
   const loadGoogleMapsScript = () => {
