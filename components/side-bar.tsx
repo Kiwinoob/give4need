@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { ProgressBarLink } from "@/components/progress-bar";
-import { Icons, type TablerIcon } from "@/components/icons";
+import { Icons } from "@/components/icons";
 
 const navLinks = [
   {

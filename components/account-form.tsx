@@ -34,7 +34,7 @@ export function AccountForm() {
     },
   });
 
-  const { handleSubmit, control, setValue, reset, watch } = form;
+  const { handleSubmit, control, setValue, reset } = form;
 
   useEffect(() => {
     const user = auth.currentUser;

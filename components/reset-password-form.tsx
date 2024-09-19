@@ -1,7 +1,5 @@
 "use client"; // Mark this component as a client-side component
-import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/app/firebase";
@@ -15,7 +13,6 @@ export default function ResetForm() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
   const handleResetPassword = async (
     event: React.FormEvent<HTMLFormElement>

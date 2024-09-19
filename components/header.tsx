@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
+//import { Badge } from "@/components/ui/badge";
 import { ProgressBarLink } from "@/components/progress-bar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { UserNav } from "@/components/user-nav";
