@@ -231,7 +231,7 @@ export default function EditListingForm({ id }: EditListingFormProps) {
       toast.success("Listing deleted successfully.", {
         description: "The " + item.title + " has been removed.",
       });
-      router.push("/"); // Redirect to the homepage or product list
+      router.push("/listing"); // Redirect to the homepage or product list
     } catch (error) {
       console.error("Error deleting listing:", error);
       toast.error("Error deleting listing.", {

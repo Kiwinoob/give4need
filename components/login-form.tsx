@@ -69,9 +69,11 @@ export default function LoginForm() {
       router.replace(redirect ? redirect : "/");
     } catch (error: any) {
       const errorMessage = error.message || "An unexpected error occurred.";
+      console.log(errorMessage);
       setError(errorMessage);
-      toast.error(errorMessage || "Something went wrong.", {
-        description: "Your sign in request failed. Please try again.",
+      toast.error("Failed to login", {
+        description:
+          "Your sign in request failed. Please check email or password are incorrect",
       });
     } finally {
       setIsLoading(false);

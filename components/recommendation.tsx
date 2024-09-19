@@ -77,7 +77,7 @@ export default function Recommendation() {
           const { latitude, longitude } = position.coords;
           const newMap = new google.maps.Map(mapRef.current as HTMLElement, {
             center: { lat: latitude, lng: longitude },
-            zoom: 14,
+            zoom: 16,
           });
           setMap(newMap);
 
@@ -137,9 +137,11 @@ export default function Recommendation() {
           });
 
           const infoWindow = new google.maps.InfoWindow({
-            content: `<div><strong>${item.title}</strong><br>Condition: ${
-              item.condition
-            }<br>${item.distance.toFixed(1)} km away</div>`,
+            content: `<div style="color: black;">
+            <strong>${item.title}</strong><br>
+            Condition: ${item.condition}<br>
+            ${item.distance.toFixed(1)} km away
+          </div>`,
           });
 
           marker.addListener("click", () => {

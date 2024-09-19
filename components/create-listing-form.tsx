@@ -143,7 +143,13 @@ export default function CreateListingForm() {
   };
 
   if (!isLoaded) {
-    return <p>Loading...</p>;
+    return (
+      <div className="col-span-full flex justify-center items-center h-40">
+        <p className="text-center">
+          <Icons.spinner className=" h-10 w-10 animate-spin"></Icons.spinner>
+        </p>
+      </div>
+    );
   }
 
   const handlePlaceChanged = () => {
