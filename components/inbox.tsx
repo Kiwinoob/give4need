@@ -64,7 +64,8 @@ export default function InboxComponent() {
 
   return (
     <div
-      className="inbox-container h-[500px] w-full mx-auto py-6 sm:py-8 md:py-10"
+      className="inbox-container w-full mx-auto py-6 sm:py-8 md:py-10"
+      style={{ height: "71vh" }} // 71% of the viewport height
       ref={inboxContainer}
     ></div>
   );

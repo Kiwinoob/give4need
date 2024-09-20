@@ -21,10 +21,10 @@ const settingsNavItems = [
     title: "Appearance",
     href: "/settings/appearance",
   },
-  {
-    title: "Notifications",
-    href: "/settings/notifications",
-  },
+  // {
+  //   title: "Notifications",
+  //   href: "/settings/notifications",
+  // },
 ];
 
 interface SettingsLayoutProps {

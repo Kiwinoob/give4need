@@ -100,6 +100,9 @@ export default function ItemDetails({ item }: { item: Item }) {
       conversation.setParticipant(donorUser);
       // Prepare item details to be sent as the first message
       const itemTitle = `Item: ${item.title}`;
+      const initialMessage = `I am interested in ${itemTitle}`;
+      // Send the first message
+      await conversation.sendMessage(initialMessage);
 
       const conversationId = Talk.oneOnOneId(currentUser, donorUser);
 

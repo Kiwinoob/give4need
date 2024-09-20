@@ -37,3 +37,9 @@ next-env.d.ts
 
 # .gitignore
 .env.local
+# Million Lint
+.million
+
+# Serwist
+public/sw*
+public/swe-worker*

@@ -88,7 +88,8 @@ export default function Chat({ conversationId }: { conversationId: string }) {
 
   return (
     <div
-      className="chatbox-container h-[500px] w-full mx-auto py-6 sm:py-8 md:py-10"
+      className="chatbox-container w-full mx-auto py-6 sm:py-8 md:py-10"
+      style={{ height: "71vh" }}
       ref={chatboxContainer}
     ></div>
   );
