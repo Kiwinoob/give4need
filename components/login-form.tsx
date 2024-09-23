@@ -54,10 +54,10 @@ export default function LoginForm() {
 
       // Store the ID token in a cookie
       document.cookie = `auth-token=${idToken}; expires=${new Date(
-        Date.now() + 86400 * 30000 // 30 day in milliseconds
+        Date.now() + 86400 * 30 // 30 days in milliseconds
       ).toUTCString()}; path=/; ${
-        process.env.NODE_ENV === "production" ? "secure; " : ""
-      }SameSite=Strict`;
+        process.env.NODE_ENV === "production" ? "Secure; " : ""
+      }SameSite=Lax`;
 
       // Show a success toast
       toast.success("Successfully logged in.", {

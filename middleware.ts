@@ -15,10 +15,10 @@ function redirectToPath(request: NextRequest, path = "/") {
 }
 
 export async function middleware(request: NextRequest) {
-  const cookies = request.cookies.get("auth-token");
+  const token = request.cookies.get("auth-token");
 
-  // If there is no token, user is not authenticated
-  if (!cookies) {
+  if (!token) {
+    // Handle unauthenticated requests
     const isPublicPath = PUBLIC_PATHS.includes(request.nextUrl.pathname);
     if (!isPublicPath) {
       return redirectToLogin(request);
@@ -26,10 +26,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Assuming the token is in cookies and needs to be validated
-  // You would need to validate the token on the client side or via an endpoint here
-
-  // If the token is valid
+  // Token exists, continue with authentication check or redirect
   const isPublicPath = PUBLIC_PATHS.includes(request.nextUrl.pathname);
   if (isPublicPath) {
     const redirectSearchParams = request.nextUrl.searchParams.get("redirect");

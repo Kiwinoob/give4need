@@ -9,21 +9,25 @@ async function getCategoryItems(category: string) {
   const q = query(
     itemsRef,
     where("category", "==", category),
+    where("available", "==", true), // Fetch only available items
     orderBy("datetime", "desc")
   );
   const querySnapshot = await getDocs(q);
 
   const items: any[] = [];
+
   querySnapshot.forEach((doc) => {
     items.push({ id: doc.id, ...doc.data() });
   });
 
   return items;
 }
+
 interface UserProfile {
   displayName: string;
   photoUrl: string;
 }
+
 async function getUserProfiles(): Promise<{ [userId: string]: UserProfile }> {
   const usersRef = collection(db, "users");
   const querySnapshot = await getDocs(usersRef);
@@ -45,7 +49,8 @@ export default async function CategoryPage({
 }: {
   params: { category: string };
 }) {
-  const items = await getCategoryItems(params.category);
+  // Fetch items and user profiles
+  let items = await getCategoryItems(params.category);
   const userProfiles = await getUserProfiles();
 
   if (items.length === 0) {

@@ -1,5 +1,6 @@
-"use client";
+"use client"; // Mark this component as client-side
 import { useEffect, useState } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Image from "next/image";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Timestamp } from "firebase/firestore";
@@ -37,23 +38,73 @@ export function CategoryList({
 }: CategoryListProps) {
   const [searchQuery, setSearchQuery] = useState<string>(""); // Search query state
   const [filteredItems, setFilteredItems] = useState<CategoryItem[]>(items); // Filtered items
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null); // Current user ID state
+
+  // Get the current user's ID
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUserId(user.uid); // Set the current user's ID
+      } else {
+        setCurrentUserId(null); // User not logged in
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup subscription
+  }, []);
 
   // Update filtered items whenever search query or items change
   useEffect(() => {
+    let updatedItems = items;
+
+    // Filter out items that belong to the current user
+    if (currentUserId) {
+      updatedItems = updatedItems.filter(
+        (item) => item.userId !== currentUserId
+      );
+    }
+
+    // Apply search filter
     if (searchQuery) {
       const lowercasedQuery = searchQuery.toLowerCase();
-      const filtered = items.filter(
+      updatedItems = updatedItems.filter(
         (item) =>
           item.title.toLowerCase().includes(lowercasedQuery) ||
           item.description?.toLowerCase().includes(lowercasedQuery) ||
           ""
       );
-      setFilteredItems(filtered);
-    } else {
-      setFilteredItems(items);
     }
-  }, [searchQuery, items]);
 
+    setFilteredItems(updatedItems);
+  }, [searchQuery, items, currentUserId]);
+
+  // If there are no items to display
+  if (filteredItems.length === 0) {
+    return (
+      <div className="flex min-h-[50dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-md text-center">
+          <div className="mx-auto h-12 w-12 text-primary" />
+          <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl capitalize">
+            {categoryName}
+          </h1>
+          <p className="mt-4 text-muted-foreground">
+            Currently the category you&apos;re looking does not have any items.
+            Please check out other categories.
+          </p>
+          <div className="mt-6">
+            <ProgressBarLink
+              href="/"
+              className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              prefetch={false}
+            >
+              Go to Homepage
+            </ProgressBarLink>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="space-y-4">
       <Input
