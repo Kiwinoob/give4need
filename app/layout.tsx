@@ -5,14 +5,40 @@ import { Icons } from "@/components/icons";
 import { Toaster } from "@/components/ui/sonner";
 import { ProgressBar } from "@/components/progress-bar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { host, site } from "@/lib/config";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Give4Need",
-  description: "The official app of the Give4Need",
+  metadataBase: new URL(host),
+  applicationName: site.name,
+  title: {
+    default: site.name,
+    template: `%s - ${site.name}`,
+  },
+  description: site.description,
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: site.name,
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  robots: {
+    index: false,
+  },
+  openGraph: {
+    type: "website",
+    siteName: site.name,
+    title: {
+      default: site.name,
+      template: `%s - ${site.name}`,
+    },
+    description: site.description,
+  },
 };
-
 export const viewport: Viewport = {
   colorScheme: "dark light",
   width: "device-width",
