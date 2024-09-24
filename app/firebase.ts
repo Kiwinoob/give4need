@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "@firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { getMessaging } from "firebase/messaging";
+//import { getMessaging } from "firebase/messaging";
 import { getAuth } from "firebase/auth";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -30,6 +30,6 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 
 //Firebase Cloud Messaging
-const messaging = getMessaging(app);
+//const messaging = getMessaging(app);
 
-export { db, auth, storage, messaging };
+export { db, auth, storage };
