@@ -2,8 +2,9 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "@firebase/firestore";
 import { getStorage } from "firebase/storage";
-
+import { getMessaging } from "firebase/messaging";
 import { getAuth } from "firebase/auth";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -28,4 +29,7 @@ const db = getFirestore(app);
 // cloud firestore
 const storage = getStorage(app);
 
-export { db, auth, storage };
+//Firebase Cloud Messaging
+const messaging = getMessaging(app);
+
+export { db, auth, storage, messaging };

@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { ProgressBarLink } from "./progress-bar";
 import { toast } from "sonner";
+import { getAuth } from "firebase/auth"; // Import Firebase Auth
 
 export default function Recommendation() {
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -46,12 +47,21 @@ export default function Recommendation() {
     lng: number;
   }) => {
     try {
+      const auth = getAuth(); // Get Firebase Auth instance
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
+        toast.error("User not authenticated");
+        return;
+      }
+
       const q = query(collection(db, "items"), where("available", "==", true));
       const querySnapshot = await getDocs(q);
       const fetchedItems: any[] = [];
+
       querySnapshot.forEach((doc) => {
         const itemData = doc.data();
-        const { latitude, longitude } = itemData;
+        const { latitude, longitude, userId, available } = itemData;
 
         const distance = calculateDistance(
           userLocation.lat,
@@ -60,10 +70,17 @@ export default function Recommendation() {
           longitude
         );
 
-        if (distance >= 0 && distance <= 5) {
+        // Filter out items where the userId matches the current user or the item is unavailable
+        if (
+          distance >= 0 &&
+          distance <= 5 &&
+          userId !== currentUser.uid &&
+          available
+        ) {
           fetchedItems.push({ id: doc.id, ...itemData, distance });
         }
       });
+
       setItems(fetchedItems);
     } catch (error) {
       console.error("Error fetching items from Firebase:", error);
@@ -162,7 +179,7 @@ export default function Recommendation() {
         </div>
       </div>
 
-      <div className="w-80 bg-background p-6 overflow-auto">
+      <div className="w-80 bg-background overflow-auto">
         <div>
           <h2 className="text-2xl font-bold ">Nearby Items</h2>
           <p className="text-sm text-muted-foreground mb-4">
