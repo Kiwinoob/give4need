@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { setPersistence, browserLocalPersistence } from "firebase/auth";
 import { auth } from "@/app/firebase";
 import { toast } from "sonner";
 import { Icons } from "@/components/icons";
@@ -42,6 +43,8 @@ export default function LoginForm() {
     }
 
     try {
+      // Set the persistence to local so that the session persists
+      await setPersistence(auth, browserLocalPersistence);
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
