@@ -43,8 +43,6 @@ export default function LoginForm() {
     }
 
     try {
-      // Set the persistence to local so that the session persists
-      await setPersistence(auth, browserLocalPersistence);
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
