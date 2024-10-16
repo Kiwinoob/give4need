@@ -1,3 +1,4 @@
+"use client";
 import { useEffect } from "react";
 import { onIdTokenChanged } from "firebase/auth";
 import { auth } from "@/app/firebase";
