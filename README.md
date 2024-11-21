@@ -11,7 +11,7 @@ You'll first need a Firebase project which can be made [via the ](https://fireba
 1.  Clone this project with Git
 
     ```bash
-    git clone https://github.com/ISnackable/saf-duty
+    git clone https://github.com/Kiwinoob/give4need
     ```
 
 2.  Rename `.env.local.example` to `.env.local` and update the following:
